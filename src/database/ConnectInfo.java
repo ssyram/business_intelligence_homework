@@ -16,7 +16,6 @@ class ConnectInfo {
         try {
             reader = new BufferedReader(new FileReader(file));
             password = reader.readLine();
-            System.out.println(password);
         }
         catch (Exception e) {
             e.printStackTrace();
