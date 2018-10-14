@@ -2,7 +2,7 @@ package fpgrowth.util;
 
 import java.util.ArrayList;
 
-class FpTreeNode {
+public class FpTreeNode {
     private int item_num; // -1 means null
     private int count;
 
