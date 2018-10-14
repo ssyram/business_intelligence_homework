@@ -1,6 +1,7 @@
 package database;
 
 import fpgrowth.util.FpListItem;
+import javafx.util.Pair;
 import util.GlobalInfo;
 
 import java.sql.ResultSet;
@@ -40,14 +41,23 @@ public class DatabaseOperator {
         return r;
     }
 
-    public static ArrayList<FpListItem> getFpItemCount() {
+    /**
+     * HashMap<Integer, Integer> to record the exact order of a given item
+     * when constructing the tree, every item in a transaction needs to be set in order
+     * so that, by using this hash map, it can use a util to accelerate the compare process.
+     */
+    public static Pair<ArrayList<FpListItem>, HashMap<Integer, Integer>> getFpItemCount() {
         ArrayList<FpListItem> r = new ArrayList<>();
+        HashMap<Integer, Integer> rm = new HashMap<>();
+        int i = 0;
 
         try {
             ResultSet set = execute(GET_ITEM_COUNT_SQL);
 
-            while (set.next())
-                r.add(new FpListItem(set.getInt(1), set.getInt(2)));
+            while (set.next()) {
+                r.add(new FpListItem(set.getInt(1)));
+                rm.put(set.getInt(1), i++);
+            }
 
         }
         catch (SQLException e) {
@@ -57,7 +67,7 @@ public class DatabaseOperator {
 //        r.sort(Comparator.comparing(FpListItem::getKey));
 //        Collections.sort(r, (a, b) -> (a.getKey() - b.getKey()));
 
-        return r;
+        return new Pair<>(r, rm);
     }
 
 }
