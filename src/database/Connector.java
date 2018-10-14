@@ -8,7 +8,7 @@ public class Connector {
     public static Connection connect() {
         try {
             Class.forName(ConnectInfo.driver);
-            con = (Connection) DriverManager.getConnection(ConnectInfo.url, ConnectInfo.username, ConnectInfo.password);
+            con = DriverManager.getConnection(ConnectInfo.url, ConnectInfo.username, ConnectInfo.password);
         }
         catch (Exception e) {
             System.out.println("not valid connection");
@@ -18,14 +18,14 @@ public class Connector {
         return con;
     }
 
-    public static Connection getConnection() {
+    static Connection getConnection() {
         if (con == null)
             con = connect();
 
         return con;
     }
 
-    public static void closeConnection(Connection con) {
+    public static void closeConnection() {
         try {
             con.close();
             con = null;
