@@ -16,7 +16,7 @@ public class DatabaseOperator {
             "where cnt > " +
             GlobalInfo.Supportive + " * " +
             "(select count(transaction_num) from transactions)" +
-            "order by cnt desc;";
+            "order by cnt, item_num desc;";
 
     private static ResultSet execute(String sql) throws SQLException {
         Statement stmt = Connector.getConnection().createStatement();
