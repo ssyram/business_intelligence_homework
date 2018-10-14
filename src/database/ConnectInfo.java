@@ -10,7 +10,7 @@ class ConnectInfo {
     static String password = ""; //edit here
 
     static {
-        File file = new File("database/password");
+        File file = new File("src/database/password");
 
         BufferedReader reader;
         try {
