@@ -1,4 +1,4 @@
-package fpgrowth.util;
+package frequentpatternalgorithm.fpgrowth.util;
 
 import java.util.ArrayList;
 import java.util.List;

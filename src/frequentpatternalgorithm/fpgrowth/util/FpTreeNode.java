@@ -1,4 +1,4 @@
-package fpgrowth.util;
+package frequentpatternalgorithm.fpgrowth.util;
 
 import com.sun.istack.internal.NotNull;
 
@@ -80,10 +80,10 @@ public class FpTreeNode {
         return item_num;
     }
 
-    public void setNextNode(FpTreeNode nextNode) {
+    void setNextNode(FpTreeNode nextNode) {
         next = nextNode;
     }
-    public void addChildNode(FpTreeNode childNode) {
+    private void addChildNode(FpTreeNode childNode) {
         if (childNodes == null)
             childNodes = new ArrayList<>();
         childNodes.add(childNode);

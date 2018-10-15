@@ -1,4 +1,4 @@
-package util.result;
+package frequentpatternalgorithm.util.result;
 
 import javafx.util.Pair;
 
@@ -15,7 +15,7 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
         this.support_count = support_count;
     }
 
-    public Set<Integer> getSet() {
+    Set<Integer> getSet() {
         return set;
     }
 

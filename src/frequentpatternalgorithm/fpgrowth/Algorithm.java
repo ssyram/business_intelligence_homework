@@ -1,10 +1,10 @@
-package fpgrowth;
+package frequentpatternalgorithm.fpgrowth;
 
-import fpgrowth.util.FrequentSetContainer;
-import util.result.FrequentSet;
-import fpgrowth.util.FpListItem;
-import fpgrowth.util.FpTreeNode;
-import fpgrowth.util.Transaction;
+import frequentpatternalgorithm.util.result.FrequentSetContainer;
+import frequentpatternalgorithm.util.result.FrequentSet;
+import frequentpatternalgorithm.fpgrowth.util.FpListItem;
+import frequentpatternalgorithm.fpgrowth.util.FpTreeNode;
+import frequentpatternalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 
@@ -19,9 +19,10 @@ public class Algorithm {
      */
     public static FrequentSetContainer calculateRules(
             List<FpListItem> orderedItemList,
-            List<Transaction> transactions
+            List<Transaction> transactions,
+            int support_threshold
     ) {
-        return calculateRules(orderedItemList, transactions, null);
+        return calculateRules(orderedItemList, transactions, support_threshold, null);
     }
 
     /**
@@ -35,6 +36,7 @@ public class Algorithm {
     public static FrequentSetContainer calculateRules(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
+            int support_threshold,
             Map<Integer, Integer> item_orderMap
     ) {
         if (item_orderMap == null) {
@@ -51,7 +53,7 @@ public class Algorithm {
                 true
         );
 
-        mining(r, orderedItemList, item_orderMap, new HashSet<>(), -1);
+        mining(r, orderedItemList, item_orderMap, new HashSet<>(), -1, support_threshold);
 
         return r;
     }
@@ -61,12 +63,13 @@ public class Algorithm {
             List<FpListItem> orderedItemList,
             Map<Integer, Integer> item_orderMap,
             Set<Integer> postFixKeySet,
-            int support_count
+            int support_count,
+            int support_threshold
     ) {
         FpTreeNode root = orderedItemList.get(0).getFirst().getParentNode();
         if (!root.isRoot())
             throw new RuntimeException("not a valid orderedItemList");
-        trimTree(orderedItemList);
+        trimTree(orderedItemList, support_threshold);
         if (isSingleBranch(root)) {
             Set<Integer> waitForCombineSet = new HashSet<>();
             for (FpTreeNode node = root.getOnlyChildNode(); node != null; node = node.getOnlyChildNode())
@@ -100,7 +103,9 @@ public class Algorithm {
                         itemList,
                         nioMap,
                         postFixKeySet,
-                        (support_count < 0 || support_count > item.getCount()) ? item.getCount() : support_count
+                        (support_count < 0 || support_count > item.getCount()) ? item.getCount()
+                                : support_count,
+                        support_threshold
                 );
                 postFixKeySet.remove(item.getKey());
             }
@@ -172,7 +177,7 @@ public class Algorithm {
         }
     }
 
-    private static void trimTree(List<FpListItem> orderedItemList) {
+    private static void trimTree(List<FpListItem> orderedItemList, int support_threshold) {
         for (int i = orderedItemList.size() - 1; i >= 0; --i) {
             FpListItem item = orderedItemList.get(i);
             if (item.getCount() >= GlobalInfo.total_support)

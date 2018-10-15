@@ -1,15 +1,16 @@
-package fpgrowth;
+package util.adaptor;
 
 import database.DatabaseOperator;
-import fpgrowth.util.FpListItem;
-import fpgrowth.util.FrequentSetContainer;
-import fpgrowth.util.Transaction;
+import frequentpatternalgorithm.fpgrowth.Algorithm;
+import frequentpatternalgorithm.fpgrowth.util.FpListItem;
+import frequentpatternalgorithm.util.result.FrequentSetContainer;
+import frequentpatternalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
-import util.result.FrequentSet;
+import util.GlobalInfo;
 
 import java.util.*;
 
-public class ProjectAdaptor {
+public class FpGrowthProjectAdaptor {
     FrequentSetContainer runFpGrowth() {
         Pair<ArrayList<FpListItem>, HashMap<Integer, Integer>> database_info = DatabaseOperator.getFpItemCount();
         List<FpListItem> orderedItemSet = database_info.getKey();
@@ -17,6 +18,7 @@ public class ProjectAdaptor {
 
         List<Transaction> transactions = DatabaseOperator.getTransactions();
 
-        return Algorithm.calculateRules(orderedItemSet, transactions, item_orderMap);
+        return Algorithm.calculateRules(orderedItemSet, transactions, GlobalInfo.total_support,
+                item_orderMap);
     }
 }

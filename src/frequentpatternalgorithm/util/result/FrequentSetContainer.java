@@ -1,6 +1,4 @@
-package fpgrowth.util;
-
-import util.result.FrequentSet;
+package frequentpatternalgorithm.util.result;
 
 import java.util.HashMap;
 import java.util.HashSet;

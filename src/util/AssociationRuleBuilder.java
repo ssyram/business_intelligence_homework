@@ -1,12 +1,11 @@
 package util;
 
-import fpgrowth.util.FrequentSetContainer;
+import frequentpatternalgorithm.util.result.FrequentSetContainer;
 import javafx.util.Pair;
 import util.result.AssociationRule;
-import util.result.FrequentSet;
+import frequentpatternalgorithm.util.result.FrequentSet;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class AssociationRuleBuilder {

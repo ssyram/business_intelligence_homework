@@ -1,4 +1,4 @@
-package fpgrowth.util;
+package frequentpatternalgorithm.fpgrowth.util;
 
 public class FpListItem {
     private int key;

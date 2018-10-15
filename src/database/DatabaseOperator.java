@@ -1,7 +1,7 @@
 package database;
 
-import fpgrowth.util.FpListItem;
-import fpgrowth.util.Transaction;
+import frequentpatternalgorithm.fpgrowth.util.FpListItem;
+import frequentpatternalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 
