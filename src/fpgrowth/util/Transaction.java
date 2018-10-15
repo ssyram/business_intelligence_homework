@@ -28,4 +28,8 @@ public class Transaction {
     public int getCount() {
         return count;
     }
+
+    public int getContentAt(int pos) {
+        return itemContent.get(pos);
+    }
 }
