@@ -1,5 +1,6 @@
 package fpgrowth;
 
+import fpgrowth.util.FrequentSetContainer;
 import util.result.FrequentSet;
 import fpgrowth.util.FpListItem;
 import fpgrowth.util.FpTreeNode;
@@ -16,7 +17,7 @@ public class Algorithm {
      * @param transactions all transactions
      * @return a set of association rules which will contain all information that is interested
      */
-    public static Set<FrequentSet> calculateRules(
+    public static FrequentSetContainer calculateRules(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions
     ) {
@@ -31,7 +32,7 @@ public class Algorithm {
      *                      orderedItemList, if null, it will be created automatically
      * @return a set of association rules which will contain all information that is interested
      */
-    public static Set<FrequentSet> calculateRules(
+    public static FrequentSetContainer calculateRules(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
             Map<Integer, Integer> item_orderMap
@@ -41,7 +42,7 @@ public class Algorithm {
             for (int i = 0; i < orderedItemList.size(); ++i)
                 item_orderMap.put(orderedItemList.get(i).getKey(), i);
         }
-        Set<FrequentSet> r = new HashSet<>();
+        FrequentSetContainer r = new FrequentSetContainer();
 
         createTree(
                 orderedItemList,
@@ -56,7 +57,7 @@ public class Algorithm {
     }
 
     private static void mining(
-            Set<FrequentSet> r,
+            FrequentSetContainer r,
             List<FpListItem> orderedItemList,
             Map<Integer, Integer> item_orderMap,
             Set<Integer> postFixKeySet,
@@ -113,7 +114,7 @@ public class Algorithm {
      * @param support_count the count for each of the set
      */
     private static void combineElementsToFrequentSet(
-            Set<FrequentSet> r,
+            FrequentSetContainer r,
             Set<Integer> waitForCombineSet,
             Set<Integer> postFixKeySet,
             int support_count,
