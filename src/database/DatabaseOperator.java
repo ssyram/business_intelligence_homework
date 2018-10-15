@@ -1,6 +1,7 @@
 package database;
 
 import fpgrowth.util.FpListItem;
+import fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 
@@ -28,6 +29,37 @@ public class DatabaseOperator {
         }
     }
 
+    private static final String GET_ALL_TRANSACTIONS = "select * from transactions group by transaction_num order by transaction_num, item_num desc;";
+
+    public static List<Transaction> getTransactions() {
+        List<Transaction> l = new ArrayList<>();
+        try {
+            ResultSet set = execute(GET_ALL_TRANSACTIONS);
+
+            List<Integer> li = new ArrayList<>();
+            int temp;
+            set.next();
+            temp = set.getInt(1);
+            li.add(set.getInt(2));
+            while (set.next()) {
+                if (temp != set.getInt(1)) {
+                    l.add(new Transaction(li));
+                    li = new ArrayList<>();
+                    temp = set.getInt(1);
+                }
+                li.add(set.getInt(2));
+            }
+            l.add(new Transaction(li));
+
+            set.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return l;
+    }
+
     private static final String GET_ITEM_COUNT_SQL = "select item_num, count(*) as cnt " +
             "from transactions " +
             "group by item_num " +
@@ -37,7 +69,9 @@ public class DatabaseOperator {
 
     private static ResultSet execute(String sql) throws SQLException {
         Statement stmt = Connector.getConnection().createStatement();
-        return stmt.executeQuery(sql);
+        ResultSet set = stmt.executeQuery(sql);
+        stmt.close();
+        return set;
     }
 
     public static Map<Integer, Integer> getItemCountMap() {
@@ -49,6 +83,8 @@ public class DatabaseOperator {
             while (set.next()) {
                 r.put(set.getInt(1), set.getInt(2));
             }
+
+            set.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -75,6 +111,7 @@ public class DatabaseOperator {
                 rm.put(set.getInt(1), i++);
             }
 
+            set.close();
         }
         catch (SQLException e) {
             e.printStackTrace();

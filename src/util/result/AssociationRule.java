@@ -1,4 +1,4 @@
-package fpgrowth.result;
+package util.result;
 
 public class AssociationRule {
 }

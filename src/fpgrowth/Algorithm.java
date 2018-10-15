@@ -1,7 +1,6 @@
 package fpgrowth;
 
-import fpgrowth.result.AssociationRule;
-import fpgrowth.result.FrequentSet;
+import util.result.FrequentSet;
 import fpgrowth.util.FpListItem;
 import fpgrowth.util.FpTreeNode;
 import fpgrowth.util.Transaction;
@@ -26,10 +25,10 @@ public class Algorithm {
 
     /**
      *
-     * @param orderedItemList a list of ordered frequent items
+     * @param orderedItemList a list of ordered frequent items, must be sorted in descending order
      * @param transactions all transactions
      * @param item_orderMap the map of item and corresponding order, which means the order in
-     *                      orderedItemList
+     *                      orderedItemList, if null, it will be created automatically
      * @return a set of association rules which will contain all information that is interested
      */
     public static Set<FrequentSet> calculateRules(
@@ -42,14 +41,16 @@ public class Algorithm {
             for (int i = 0; i < orderedItemList.size(); ++i)
                 item_orderMap.put(orderedItemList.get(i).getKey(), i);
         }
-        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>();
-
         Set<FrequentSet> r = new HashSet<>();
 
-        FpTreeNode root = createTree(orderedItemList,
-                transactions, item_orderMap, true);
+        createTree(
+                orderedItemList,
+                transactions,
+                item_orderMap,
+                true
+        );
 
-        mining(r, orderedItemList, item_orderMap, new HashSet<>());
+        mining(r, orderedItemList, item_orderMap, new HashSet<>(), -1);
 
         return r;
     }
@@ -58,9 +59,10 @@ public class Algorithm {
             Set<FrequentSet> r,
             List<FpListItem> orderedItemList,
             Map<Integer, Integer> item_orderMap,
-            Set<Integer> postFixKeySet
+            Set<Integer> postFixKeySet,
+            int support_count
     ) {
-        FpTreeNode root = orderedItemList.get(1).getFirst().getParentNode();
+        FpTreeNode root = orderedItemList.get(0).getFirst().getParentNode();
         if (!root.isRoot())
             throw new RuntimeException("not a valid orderedItemList");
         trimTree(orderedItemList);
@@ -69,7 +71,7 @@ public class Algorithm {
             for (FpTreeNode node = root.getOnlyChildNode(); node != null; node = node.getOnlyChildNode())
                 waitForCombineSet.add(node.getItem_Num());
 
-            combineElementsToFrequentSet(r, waitForCombineSet, postFixKeySet);
+            combineElementsToFrequentSet(r, waitForCombineSet, postFixKeySet, support_count, orderedItemList, item_orderMap);
         }
         else
             for (int i = orderedItemList.size() - 1; i >= 0; --i) {
@@ -88,29 +90,77 @@ public class Algorithm {
                 for (int j = 0; j < analyzedData.getValue().size(); ++j)
                     nioMap.put(itemList.get(i).getKey(), i);
 
-                FpTreeNode treeRoot = createTree(itemList, transactions, nioMap, false);
+                createTree(itemList, transactions, nioMap, false);
                 postFixKeySet.add(item.getKey());
-                mining(r, orderedItemList, item_orderMap, postFixKeySet);
+                // support_count < 0 means that it's first mining, pass item.getCount()
+                // or, pass the less one
+                mining(
+                        r,
+                        itemList,
+                        nioMap,
+                        postFixKeySet,
+                        (support_count < 0 || support_count > item.getCount()) ? item.getCount() : support_count
+                );
                 postFixKeySet.remove(item.getKey());
             }
     }
 
+    /**
+     * @implNote use binary number to guide the generation of frequent set
+     * @param r target set of element of type frequent set
+     * @param waitForCombineSet the set of elements wait for combine
+     * @param postFixKeySet the set of post fix elements
+     * @param support_count the count for each of the set
+     */
     private static void combineElementsToFrequentSet(
             Set<FrequentSet> r,
             Set<Integer> waitForCombineSet,
-            Set<Integer> postFixKeySet
+            Set<Integer> postFixKeySet,
+            int support_count,
+            List<FpListItem> orderedItemList,
+            Map<Integer, Integer> item_orderMap
     ) {
-        if (waitForCombineSet.size() > GlobalInfo.memory_size)
+        // if larger than 31, it will not be able to access an array
+        // and if it's calculated, it means the total amount will reach 2G
+        // average set larger than 8B(2 int, which can't be easier to reach)
+        // it will exceed the memory of all of my computer contemporarily
+        if (waitForCombineSet.size() > 31)
             throw new RuntimeException("out of memory: the frequent set is too large.");
-        for (long i = 1; i < (1 << waitForCombineSet.size()); ++i) {
-            for (long j = 1; j <= waitForCombineSet.size(); ++j) {
+        Integer[] dset = (Integer[]) waitForCombineSet.toArray();
+        for (int i = 1; i < (1 << dset.length); ++i) {
+            Set<Integer> ss = new HashSet<>();
+            for (int j = 0; j < dset.length; ++j) {
                 if (i < (1 << j)) break;
-                long k = i & (2 << j);
-                if (k == 0) continue;
+                if ((i & (1 << j)) != 0)
+                    ss.add(dset[j]);
             }
 
-
+            ss.addAll(postFixKeySet);
+            if (support_count < 0)
+                r.add(new FrequentSet(ss, minCountOfSS(ss, orderedItemList, item_orderMap)));
+            else
+                r.add(new FrequentSet(ss, support_count));
         }
+    }
+
+    /**
+     * must happen when the first time is a single branch
+     */
+    private static int minCountOfSS(Set<Integer> ss, List<FpListItem> orderedItemList, Map<Integer, Integer> item_orderMap) {
+        boolean fixMin = false;
+        int min = 0;
+        for (int i: ss) {
+            if (!fixMin) {
+                min = i;
+                fixMin = true;
+                continue;
+            }
+
+            if (item_orderMap.get(i) > item_orderMap.get(min))
+                min = i;
+        }
+
+        return orderedItemList.get(item_orderMap.get(min)).getCount();
     }
 
     private static boolean isSingleBranch(FpTreeNode node) {
@@ -124,7 +174,7 @@ public class Algorithm {
     private static void trimTree(List<FpListItem> orderedItemList) {
         for (int i = orderedItemList.size() - 1; i >= 0; --i) {
             FpListItem item = orderedItemList.get(i);
-            if (item.getCount() > GlobalInfo.total_support)
+            if (item.getCount() >= GlobalInfo.total_support)
                 return;
 
             for (FpTreeNode node = item.getFirst(); node != null; node = node.getNext())
@@ -156,7 +206,7 @@ public class Algorithm {
     // we can't create the corresponding item_orderMap in cpb mode
     // //     if item_orderMap is null, that means it's in cpb mode
     // //     which means that it is ordered
-    private static FpTreeNode createTree(
+    private static void createTree(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
             Map<Integer,Integer> item_orderMap,
@@ -178,20 +228,18 @@ public class Algorithm {
         FpTreeNode root = new FpTreeNode();
         for (Transaction transaction: transactions) {
             if (isUnordered)
-                // get item order from item_orderMap and then, for that a larger one is at front
-                // so, it's -(a.order() - b.order()) = b.order() - a.order()
-                // a.order() == item_orderMap.get(a)
-                // but in order to cope with cpb mode which is ascending in count, it should be
-                // a.order() - b.order()
+// //                 get item order from item_orderMap and then, for that a larger one is at front
+// //                 so, it's -(a.order() - b.order()) = b.order() - a.order()
+// //                 a.order() == item_orderMap.get(a)
+                // to cope with cpb mode which is descending in order, it should be
+                // b.order() - a.order()
                 transaction.getItemContent().sort(
-                        (a, b) -> (item_orderMap.get(a) - item_orderMap.get(b))
+                        (a, b) -> (item_orderMap.get(b) - item_orderMap.get(a))
                 );
 
-            putTransactionInTree(root, transaction, transaction.getItemContent().size(),
+            putTransactionInTree(root, transaction, transaction.getItemContent().size() - 1,
                     orderedItemList, item_orderMap);
         }
-
-        return root;
     }
 
     private static void putTransactionInTree(
@@ -216,10 +264,11 @@ public class Algorithm {
 
         // add total count
         orderedItemList.get(
-                item_orderMap.get(transaction.getContentAt(count))
+                item_orderMap.get(nextNode.getItem_Num())
         ).addCount(transaction.getCount());
 
         nextNode.addCount(transaction.getCount());
+
         putTransactionInTree(nextNode, transaction, count - 1, orderedItemList, item_orderMap);
     }
 
