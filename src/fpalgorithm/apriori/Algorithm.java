@@ -1,10 +1,9 @@
-package frequentpatternalgorithm.apriori;
+package fpalgorithm.apriori;
 
-import frequentpatternalgorithm.util.result.FrequentSet;
-import frequentpatternalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.util.result.FrequentSet;
+import fpalgorithm.util.result.FrequentSetContainer;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 

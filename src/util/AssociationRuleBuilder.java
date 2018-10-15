@@ -1,9 +1,9 @@
 package util;
 
-import frequentpatternalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.util.result.FrequentSetContainer;
 import javafx.util.Pair;
 import util.result.AssociationRule;
-import frequentpatternalgorithm.util.result.FrequentSet;
+import fpalgorithm.util.result.FrequentSet;
 
 import java.util.HashSet;
 import java.util.Set;

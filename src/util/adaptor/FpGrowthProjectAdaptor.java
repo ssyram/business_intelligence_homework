@@ -1,10 +1,10 @@
 package util.adaptor;
 
 import database.DatabaseOperator;
-import frequentpatternalgorithm.fpgrowth.Algorithm;
-import frequentpatternalgorithm.fpgrowth.util.FpListItem;
-import frequentpatternalgorithm.util.result.FrequentSetContainer;
-import frequentpatternalgorithm.fpgrowth.util.Transaction;
+import fpalgorithm.fpgrowth.Algorithm;
+import fpalgorithm.fpgrowth.util.FpListItem;
+import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 

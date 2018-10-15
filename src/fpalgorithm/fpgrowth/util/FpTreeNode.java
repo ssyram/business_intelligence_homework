@@ -1,4 +1,4 @@
-package frequentpatternalgorithm.fpgrowth.util;
+package fpalgorithm.fpgrowth.util;
 
 import com.sun.istack.internal.NotNull;
 

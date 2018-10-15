@@ -1,10 +1,10 @@
-package frequentpatternalgorithm.fpgrowth;
+package fpalgorithm.fpgrowth;
 
-import frequentpatternalgorithm.util.result.FrequentSetContainer;
-import frequentpatternalgorithm.util.result.FrequentSet;
-import frequentpatternalgorithm.fpgrowth.util.FpListItem;
-import frequentpatternalgorithm.fpgrowth.util.FpTreeNode;
-import frequentpatternalgorithm.fpgrowth.util.Transaction;
+import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.util.result.FrequentSet;
+import fpalgorithm.fpgrowth.util.FpListItem;
+import fpalgorithm.fpgrowth.util.FpTreeNode;
+import fpalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 

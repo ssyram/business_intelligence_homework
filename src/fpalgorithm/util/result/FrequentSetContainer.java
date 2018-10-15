@@ -1,4 +1,4 @@
-package frequentpatternalgorithm.util.result;
+package fpalgorithm.util.result;
 
 import java.util.HashMap;
 import java.util.HashSet;
