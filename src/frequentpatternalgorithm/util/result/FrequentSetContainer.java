@@ -21,6 +21,11 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
         v.get(l).add(set);
     }
 
+    public void addAll(Set<FrequentSet> set) {
+        for (FrequentSet s: set)
+            add(s);
+    }
+
     public FrequentSet find(Set<Integer> itemSet) {
         long l = 0;
         for (int i: itemSet)
