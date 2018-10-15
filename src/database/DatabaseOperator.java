@@ -11,12 +11,28 @@ import java.util.*;
 
 public class DatabaseOperator {
 
+    static {
+        try {
+            ResultSet set = execute("select count(item_num) from transactions group by item_num;");
+            set.next();
+            GlobalInfo.item_type_amount = set.getInt(1);
+
+            set = execute("select count(transaction_num) from transactions group by " +
+                    "transaction_num");
+            set.next();
+            GlobalInfo.record_amount = set.getInt(1);
+
+            GlobalInfo.total_support = (int)(GlobalInfo.record_amount * GlobalInfo.Supportive);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static final String GET_ITEM_COUNT_SQL = "select item_num, count(*) as cnt " +
             "from transactions " +
             "group by item_num " +
             "where cnt > " +
-            GlobalInfo.Supportive + " * " +
-            "(select count(transaction_num) from transactions)" +
+            GlobalInfo.total_support +
             "order by cnt, item_num desc;";
 
     private static ResultSet execute(String sql) throws SQLException {

@@ -49,7 +49,7 @@ public class Algorithm {
         FpTreeNode root = createTree(orderedItemList,
                 transactions, item_orderMap, true);
 
-        mining(r, orderedItemList, item_orderMap);
+        mining(r, orderedItemList, item_orderMap, new HashSet<>());
 
         return r;
     }
@@ -57,35 +57,67 @@ public class Algorithm {
     private static void mining(
             Set<FrequentSet> r,
             List<FpListItem> orderedItemList,
-            Map<Integer, Integer> item_orderMap
+            Map<Integer, Integer> item_orderMap,
+            Set<Integer> postFixKeySet
     ) {
-        for (int i = orderedItemList.size() - 1; i >= 0; --i) {
-            FpListItem item = orderedItemList.get(i);
-            // get cpb and corresponding itemSet
-            Pair<List<Transaction>, List<FpListItem>> analyzedData = analyzePath(item);
-            List<Transaction> transactions = analyzedData.getKey();
-            // turn itemSet to itemList
-            List<FpListItem> itemList = analyzedData.getValue();
-            // get itemList ordered
-            itemList.sort(
-                    (a, b) -> (item_orderMap.get(a.getKey()) - item_orderMap.get(b.getKey()))
-            );
+        FpTreeNode root = orderedItemList.get(1).getFirst().getParentNode();
+        if (!root.isRoot())
+            throw new RuntimeException("not a valid orderedItemList");
+        trimTree(orderedItemList);
+        if (isSingleBranch(root)) {
+            Set<Integer> waitForCombineSet = new HashSet<>();
+            for (FpTreeNode node = root.getOnlyChildNode(); node != null; node = node.getOnlyChildNode())
+                waitForCombineSet.add(node.getItem_Num());
 
-            Map<Integer, Integer> nioMap = new HashMap<>();
-            for (int j = 0; j < analyzedData.getValue().size(); ++j)
-                nioMap.put(itemList.get(i).getKey(), i);
+            combineElementsToFrequentSet(r, waitForCombineSet, postFixKeySet);
+        }
+        else
+            for (int i = orderedItemList.size() - 1; i >= 0; --i) {
+                FpListItem item = orderedItemList.get(i);
+                // get cpb and corresponding itemSet
+                Pair<List<Transaction>, List<FpListItem>> analyzedData = analyzePath(item);
+                List<Transaction> transactions = analyzedData.getKey();
+                // turn itemSet to itemList
+                List<FpListItem> itemList = analyzedData.getValue();
+                // get itemList ordered
+                itemList.sort(
+                        (a, b) -> (item_orderMap.get(a.getKey()) - item_orderMap.get(b.getKey()))
+                );
 
-            FpTreeNode treeRoot = createTree(itemList, transactions, nioMap, false);
-            Set<Integer> postFixKeySet = new HashSet<>();
-            postFixKeySet.add(item.getKey());
-            miningTree(r, treeRoot, itemList, postFixKeySet);
+                Map<Integer, Integer> nioMap = new HashMap<>();
+                for (int j = 0; j < analyzedData.getValue().size(); ++j)
+                    nioMap.put(itemList.get(i).getKey(), i);
+
+                FpTreeNode treeRoot = createTree(itemList, transactions, nioMap, false);
+                postFixKeySet.add(item.getKey());
+                mining(r, orderedItemList, item_orderMap, postFixKeySet);
+                postFixKeySet.remove(item.getKey());
+            }
+    }
+
+    private static void combineElementsToFrequentSet(
+            Set<FrequentSet> r,
+            Set<Integer> waitForCombineSet,
+            Set<Integer> postFixKeySet
+    ) {
+        if (waitForCombineSet.size() > GlobalInfo.memory_size)
+            throw new RuntimeException("out of memory: the frequent set is too large.");
+        for (long i = 1; i < (1 << waitForCombineSet.size()); ++i) {
+            for (long j = 1; j <= waitForCombineSet.size(); ++j) {
+                if (i < (1 << j)) break;
+                long k = i & (2 << j);
+                if (k == 0) continue;
+            }
+
+
         }
     }
 
-    private static void miningTree(Set<FrequentSet> r, FpTreeNode treeRoot, List<FpListItem> orderedItemList, Set<Integer> postFixKeySet) {
-        trimTree(orderedItemList);
-        if (isSingleBranchOrNull(treeRoot)) {
-
+    private static boolean isSingleBranch(FpTreeNode node) {
+        while (true) {
+            if (node.getChildNodeCount() > 1) return false;
+            if (node.getChildNodeCount() == 0) return true;
+            node = node.getOnlyChildNode();
         }
     }
 

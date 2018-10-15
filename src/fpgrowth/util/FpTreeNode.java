@@ -35,6 +35,21 @@ public class FpTreeNode {
         return next;
     }
 
+    public int getChildNodeCount() {
+        if (childNodes == null)
+            return 0;
+
+        return childNodes.size();
+    }
+    public FpTreeNode getOnlyChildNode() {
+        if (childNodes == null)
+            return null;
+        if (childNodes.size() != 1)
+            throw new RuntimeException("it's not only child now");
+
+        return childNodes.get(0);
+    }
+
     /**
      * always not set parentNode to null
      * @param item_num the item num in this node
@@ -69,6 +84,8 @@ public class FpTreeNode {
         next = nextNode;
     }
     public void addChildNode(FpTreeNode childNode) {
+        if (childNodes == null)
+            childNodes = new ArrayList<>();
         childNodes.add(childNode);
     }
     public boolean isRoot() {
