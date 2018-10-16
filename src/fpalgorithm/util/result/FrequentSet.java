@@ -2,6 +2,7 @@ package fpalgorithm.util.result;
 
 import javafx.util.Pair;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -15,12 +16,25 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
         this.support_count = support_count;
     }
 
-    Set<Integer> getSet() {
+    public Set<Integer> getSet() {
         return set;
     }
 
     public double getSupport_count() {
         return support_count;
+    }
+
+    @Override
+    public int hashCode() {
+        return set.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof FrequentSet)
+            return set.equals(((FrequentSet) o).set);
+
+        return false;
     }
 
     /**

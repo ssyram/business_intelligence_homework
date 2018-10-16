@@ -1,5 +1,6 @@
 package fpalgorithm.fpgrowth;
 
+import fpalgorithm.util.CombinativelyIterableSet;
 import fpalgorithm.util.result.FrequentSetContainer;
 import fpalgorithm.util.result.FrequentSet;
 import fpalgorithm.fpgrowth.util.FpListItem;
@@ -46,6 +47,9 @@ public class Algorithm {
         }
         FrequentSetContainer r = new FrequentSetContainer();
 
+        // to be prepared, in order that it's not completed
+        trimTransactions(transactions, item_orderMap);
+
         createTree(
                 orderedItemList,
                 transactions,
@@ -56,6 +60,13 @@ public class Algorithm {
         mining(r, orderedItemList, item_orderMap, new HashSet<>(), -1, support_threshold);
 
         return r;
+    }
+
+    private static void trimTransactions(List<Transaction> transactions, Map<Integer, Integer> item_orderMap) {
+        for (Transaction t: transactions)
+            for (Iterator<Integer> i = t.getItemContent().iterator(); i.hasNext(); )
+                if (item_orderMap.get(i.next()) == null)
+                    i.remove();
     }
 
     private static void mining(
@@ -130,22 +141,30 @@ public class Algorithm {
         // and if it's calculated, it means the total amount will reach 2G
         // average set larger than 8B(2 int, which can't be easier to reach)
         // it will exceed the memory of all of my computer contemporarily
-        if (waitForCombineSet.size() > 31)
-            throw new RuntimeException("out of memory: the frequent set is too large.");
-        Integer[] dset = (Integer[]) waitForCombineSet.toArray();
-        for (int i = 1; i < (1 << dset.length); ++i) {
-            Set<Integer> ss = new HashSet<>();
-            for (int j = 0; j < dset.length; ++j) {
-                if (i < (1 << j)) break;
-                if ((i & (1 << j)) != 0)
-                    ss.add(dset[j]);
-            }
-
-            ss.addAll(postFixKeySet);
+//        if (waitForCombineSet.size() > 31)
+//            throw new RuntimeException("out of memory: the frequent set is too large.");
+//        Integer[] dset = (Integer[]) waitForCombineSet.toArray();
+//        for (int i = 1; i < (1 << dset.length); ++i) {
+//            Set<Integer> ss = new HashSet<>();
+//            for (int j = 0; j < dset.length; ++j) {
+//                if (i < (1 << j)) break;
+//                if ((i & (1 << j)) != 0)
+//                    ss.add(dset[j]);
+//            }
+//
+//            ss.addAll(postFixKeySet);
+//            if (support_count < 0)
+//                r.add(new FrequentSet(ss, minCountOfSS(ss, orderedItemList, item_orderMap)));
+//            else
+//                r.add(new FrequentSet(ss, support_count));
+//        }
+        CombinativelyIterableSet<Integer> cis = new CombinativelyIterableSet<>(waitForCombineSet);
+        for (Set<Integer> s: cis) {
+            s.addAll(postFixKeySet);
             if (support_count < 0)
-                r.add(new FrequentSet(ss, minCountOfSS(ss, orderedItemList, item_orderMap)));
+                r.add(new FrequentSet(s, minCountOfSS(s, orderedItemList, item_orderMap)));
             else
-                r.add(new FrequentSet(ss, support_count));
+                r.add(new FrequentSet(s, support_count));
         }
     }
 

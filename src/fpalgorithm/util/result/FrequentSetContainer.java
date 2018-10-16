@@ -1,5 +1,7 @@
 package fpalgorithm.util.result;
 
+import com.sun.istack.internal.Nullable;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,7 +10,9 @@ import java.util.Set;
 public class FrequentSetContainer implements Iterable<FrequentSet> {
     private HashMap<Long, Set<FrequentSet>> v = new HashMap<>();
 
-    public void add(FrequentSet set) {
+    public void add(@Nullable FrequentSet set) {
+        if (set == null)
+            return;
         long l = 0;
         for (int i: set.getSet())
             l += i;
@@ -21,7 +25,9 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
         v.get(l).add(set);
     }
 
-    public void addAll(Set<FrequentSet> set) {
+    public void addAll(@Nullable Set<FrequentSet> set) {
+        if (set == null)
+            return;
         for (FrequentSet s: set)
             add(s);
     }
