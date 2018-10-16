@@ -3,7 +3,6 @@ package util.adaptor.apriori;
 import database.DatabaseOperator;
 import fpalgorithm.apriori.Algorithm;
 import fpalgorithm.util.result.FrequentSetContainer;
-import javafx.util.Pair;
 import util.GlobalInfo;
 
 import java.util.Map;

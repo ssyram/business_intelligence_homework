@@ -1,6 +1,7 @@
 package fpalgorithm.apriori;
 
 import fpalgorithm.apriori.util.IQuerySupportive;
+import fpalgorithm.apriori.util.UtilFuncs;
 import fpalgorithm.util.CombinativelyIterableSet;
 import fpalgorithm.util.result.FrequentSet;
 import fpalgorithm.util.result.FrequentSetContainer;
@@ -54,7 +55,7 @@ public class Algorithm {
             int support_threshold
     ) {
         Set<Integer> r;
-        Pair<Set<Integer>, Set<Integer>> joinInfo = joinIfJoinable(sOne, sTwo);
+        Pair<Set<Integer>, Set<Integer>> joinInfo = UtilFuncs.joinIfJoinable(sOne.getSet(), sTwo.getSet());
         if (joinInfo == null)
             return null;
 
@@ -96,39 +97,5 @@ public class Algorithm {
         wfcSet.addAll(distinctSet);
 
         return wfcSet;
-    }
-
-    /**
-     * @return null if not joinable, or a pair of distinct item set and wait for combine item set
-     * pay attention that if there's no combine item, the second will be null
-     */
-    private static Pair<Set<Integer>, Set<Integer>> joinIfJoinable(
-            FrequentSet sOne,
-            FrequentSet sTwo
-    ) {
-        if (sOne.equals(sTwo))
-            throw new RuntimeException("sOne cannot equals to sTwo");
-        if (sOne.getSet().size() != sTwo.getSet().size())
-            return null;
-
-        Integer d = null;
-        Set<Integer> waitForCombineItemSet = sOne.getSet().size() == 1 ? null : new HashSet<>();
-        for (Integer i: sOne.getSet())
-            if (sTwo.getSet().contains(i)) waitForCombineItemSet.add(i);
-            else if (d == null) d = i;
-            else return null;
-
-        // as frequent set can't be equals, there is no need to check if d == null here.
-
-        Set<Integer> distinctItemSet = new HashSet<>();
-        distinctItemSet.add(d);
-
-        for (Integer i: sTwo.getSet())
-            if (!sOne.getSet().contains(i)) {
-                distinctItemSet.add(i);
-                break;
-            }
-
-        return new Pair<>(distinctItemSet, waitForCombineItemSet);
     }
 }
