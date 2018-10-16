@@ -15,9 +15,9 @@ public class GaussianGenerator {
         this.min = min;
     }
 
-    double getNext() {
+    public double getNext() {
         double d;
-        while ((d = Math.sqrt(stdvar) * r.nextGaussian() + avg) >= max || d <= min);
+        while ((d = Math.sqrt(stdvar) * r.nextGaussian() + avg) > max || d <= min);
 
         return d;
     }

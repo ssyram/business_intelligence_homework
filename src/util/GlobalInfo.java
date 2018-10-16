@@ -1,9 +1,16 @@
 package util;
 
+import database.DatabaseOperator;
+
 public class GlobalInfo {
-    public static double Supportive = 0.2;
+
+    static {
+        DatabaseOperator.loadGlobalInfo(0.5, 0.5);
+    }
+
+    public static double Supportive;
     public static int total_support;
     public static int record_amount;
     public static int item_type_amount;
-    public static double confidence_threshold = 0.5;
+    public static double confidence_threshold;
 }

@@ -12,18 +12,42 @@ import java.util.*;
 
 public class DatabaseOperator {
 
-    static {
+    public static void emptyDatabase() {
+        doUpdate("delete from transactions;");
+    }
+
+    private static void doUpdate(String sql) {
         try {
+            Statement stmt = Connector.getConnection().createStatement();
+            stmt.executeUpdate(sql);
+            stmt.close();
+            Connector.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadGlobalInfo(double support_threshold, double confidence_threshold) {
+        try {
+            GlobalInfo.Supportive = support_threshold;
+            GlobalInfo.confidence_threshold = confidence_threshold;
+
             ResultSet set = execute("select count(item_num) from transactions group by item_num;");
-            set.next();
-            GlobalInfo.item_type_amount = set.getInt(1);
+            if (set.next())
+                GlobalInfo.item_type_amount = set.getInt(1);
+            set.close();
 
             set = execute("select count(transaction_num) from transactions group by " +
                     "transaction_num");
-            set.next();
-            GlobalInfo.record_amount = set.getInt(1);
+            if (set.next())
+                GlobalInfo.record_amount = set.getInt(1);
 
             GlobalInfo.total_support = (int)(GlobalInfo.record_amount * GlobalInfo.Supportive);
+
+            System.out.println("types amount: " + GlobalInfo.item_type_amount);
+            System.out.println("transactions amount: " + GlobalInfo.record_amount);
+            System.out.println("support threshold: " + GlobalInfo.Supportive);
+            System.out.println("total support: " + GlobalInfo.total_support);
 
             closeExecute(set);
         }catch(Exception e) {
@@ -31,7 +55,11 @@ public class DatabaseOperator {
         }
     }
 
-    private static final String GET_ALL_TRANSACTIONS = "select * from transactions group by transaction_num order by transaction_num, item_num desc;";
+    private static final String GET_ALL_TRANSACTIONS =
+                    "select * " +
+                    "from transactions " +
+                    "group by transaction_num " +
+                    "order by transaction_num, item_num desc;";
 
     public static List<Transaction> getTransactions() {
         List<Transaction> l = new ArrayList<>();
@@ -126,7 +154,12 @@ public class DatabaseOperator {
     private static Statement executeStatement;
 
     private static ResultSet execute(String sql) throws SQLException {
-        executeStatement = Connector.getConnection().createStatement();
+        try {
+            executeStatement = Connector.getConnection().createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("cause sentence: " + sql, e);
+        }
 
         return  executeStatement.executeQuery(sql);
     }
@@ -148,12 +181,8 @@ public class DatabaseOperator {
             e.printStackTrace();
         }
     }
-    public static void continueInsert(String sql) {
-        try {
+    public static void continueInsert(String sql) throws SQLException {
             insertStmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
     public static void endInsert() {
         try {
