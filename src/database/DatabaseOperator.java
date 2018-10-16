@@ -24,6 +24,8 @@ public class DatabaseOperator {
             GlobalInfo.record_amount = set.getInt(1);
 
             GlobalInfo.total_support = (int)(GlobalInfo.record_amount * GlobalInfo.Supportive);
+
+            set.close();
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -114,7 +116,33 @@ public class DatabaseOperator {
         Statement stmt = Connector.getConnection().createStatement();
         ResultSet set = stmt.executeQuery(sql);
         stmt.close();
+        Connector.closeConnection();
         return set;
+    }
+
+    private static Statement insertStmt;
+
+    public static void startInsert() {
+        try {
+            insertStmt = Connector.getConnection().createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void continueInsert(String sql) {
+        try {
+            insertStmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void endInsert() {
+        try {
+            insertStmt.close();
+            Connector.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Map<Integer, Integer> getItemCountMap() {

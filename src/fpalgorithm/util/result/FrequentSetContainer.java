@@ -1,31 +1,59 @@
 package fpalgorithm.util.result;
 
 import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class FrequentSetContainer implements Iterable<FrequentSet> {
-    private HashMap<Long, Set<FrequentSet>> v = new HashMap<>();
+    // level one: addition, level two: multiplication
+    private HashMap<Long, HashMap<Long, Set<FrequentSet>>> v = new HashMap<>();
 
     public void add(@Nullable FrequentSet set) {
         if (set == null)
             return;
         long l = 0;
-        for (int i: set.getSet())
+        long m = 1;
+        for (int i: set.getSet()) {
             l += i;
+            m *= i;
+        }
 
         // have the same meaning of:
 //        if (v.get(l) == null)
 //            v.put(l, new HashSet<>());
-        v.computeIfAbsent(l, k -> new HashSet<>());
+//        v.computeIfAbsent(l, k -> {
+//            HashMap<Long, Set<FrequentSet>> n = new HashMap<>();
+//
+//            long m = 1;
+//            for (int i: set.getSet())
+//                m *= i;
+//
+//            Set<FrequentSet> fss = new HashSet<>();
+//            fss.add(set);
+//
+//            n.put(m, fss);
+//
+//            return n;
+//        });
+        v.computeIfAbsent(l, k -> new HashMap<>());
 
-        v.get(l).add(set);
+        v.get(l).computeIfAbsent(m, k -> new HashSet<>());
+
+        v.get(l).get(m).add(set);
     }
 
-    public void addAll(@Nullable Set<FrequentSet> set) {
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (FrequentSet set: this)
+            builder.append(set.toString()).append("\n");
+
+        return builder.toString();
+    }
+
+    public void addAll(@Nullable Set< ? extends FrequentSet> set) {
         if (set == null)
             return;
         for (FrequentSet s: set)
@@ -34,13 +62,23 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
 
     public FrequentSet find(Set<Integer> itemSet) {
         long l = 0;
-        for (int i: itemSet)
+        long m = 0;
+        for (int i: itemSet) {
             l += i;
+            m *= i;
+        }
 
-        Set<FrequentSet> set = v.get(l);
-        FrequentSet target = null;
+        Set<FrequentSet> set;
+        try {
+            set = v.get(l).get(m);
+        } catch (Exception e) {
+            return null;
+        }
+
         if (set == null)
             return null;
+
+//        FrequentSet target = null;
         first: for (FrequentSet ns: set) {
             if (ns.getSet().size() != itemSet.size())
                 continue;
@@ -49,31 +87,49 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
                 if (!itemSet.contains(i))
                     continue first;
 
-            target = ns;
+//            target = ns;
+
+            return ns;
         }
 
-        if (target == null)
-            return null;
+        return null;
 
-        return target;
+//        if (target == null)
+//            return null;
+
+//        return target;
     }
 
     @Override
+    @NotNull
     public Iterator<FrequentSet> iterator() {
+//      HashMap<Long, HashMap<Long, Set<FrequentSet>>>
         return new Iterator<FrequentSet>() {
-            Set<Long> keys = v.keySet();
-            Iterator<Long> key_it = keys.iterator();
-            Iterator<FrequentSet> set_it = v.get(key_it.next()).iterator();
+//            Set<Long> additions = v.keySet();
+            Iterator<Long> a_it = v.keySet().iterator();
+            long cache = a_it.next();
+//            Set<Long> multiplications = v.get(cache).keySet();
+            Iterator<Long> m_it = v.get(cache).keySet().iterator();
+            Iterator<FrequentSet> set_it = v.get(cache).get(m_it.next()).iterator();
 
             @Override
             public boolean hasNext() {
-                return (v.size() != 0) && (key_it.hasNext() || set_it.hasNext());
+                return (v.size() != 0) &&
+                        (a_it.hasNext() || m_it.hasNext() || set_it.hasNext());
             }
 
             @Override
             public FrequentSet next() {
                 if (!set_it.hasNext())
-                    set_it = v.get(key_it.next()).iterator();
+                    if (m_it.hasNext())
+                        set_it = v.get(cache).get(m_it.next()).iterator();
+                    else {
+                        cache = a_it.next();
+//                        multiplications = v.get(cache).keySet();
+                        m_it = v.get(cache).keySet().iterator();
+                        set_it = v.get(cache).get(m_it.next()).iterator();
+                    }
+
                 return set_it.next();
             }
         };

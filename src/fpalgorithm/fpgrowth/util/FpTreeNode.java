@@ -2,16 +2,30 @@ package fpalgorithm.fpgrowth.util;
 
 import com.sun.istack.internal.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FpTreeNode {
     private int item_num; // -1 means null
     private int count;
 
     private FpTreeNode parentNode;
-    private ArrayList<FpTreeNode> childNodes;
+    private Map<Integer, FpTreeNode> childNodes = new HashMap<>();
 
     private FpTreeNode next = null; // for fp list
+
+    @Override
+    public int hashCode() {
+        return item_num;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof FpTreeNode)
+            return item_num == ((FpTreeNode) o).item_num;
+
+        return false;
+    }
 
     /**
      * only use this constructor when wants to create the first node
@@ -22,9 +36,6 @@ public class FpTreeNode {
         parentNode = null;
     }
 
-    public int getItem_num() {
-        return item_num;
-    }
     public int getCount() {
         return count;
     }
@@ -36,18 +47,13 @@ public class FpTreeNode {
     }
 
     public int getChildNodeCount() {
-        if (childNodes == null)
-            return 0;
-
         return childNodes.size();
     }
     public FpTreeNode getOnlyChildNode() {
-        if (childNodes == null)
-            return null;
         if (childNodes.size() != 1)
             throw new RuntimeException("it's not only child now");
 
-        return childNodes.get(0);
+        return childNodes.values().iterator().next();
     }
 
     /**
@@ -62,16 +68,9 @@ public class FpTreeNode {
     }
 
     public FpTreeNode findChildNode(int item_num) {
-        for (FpTreeNode node: childNodes)
-            if (node.item_num == item_num)
-                return node;
-
-        return null;
+        return childNodes.get(item_num);
     }
 
-    public void addCount() {
-        ++count;
-    }
     public void addCount(int additionalCount) {
         count += additionalCount;
     }
@@ -84,16 +83,17 @@ public class FpTreeNode {
         next = nextNode;
     }
     private void addChildNode(FpTreeNode childNode) {
-        if (childNodes == null)
-            childNodes = new ArrayList<>();
-        childNodes.add(childNode);
+//        childNodes.computeIfPresent(childNode.item_num, (k, v) -> {throw new RuntimeException("already exists.");});
+        if (childNodes.get(childNode.item_num) != null)
+            throw new RuntimeException("child node with num: " + childNode.item_num + "already existed.");
+        childNodes.put(childNode.item_num, childNode);
     }
     public boolean isRoot() {
         return item_num == -1;
     }
 
     public void eliminateFromTree() {
-        parentNode.childNodes.remove(this);
+        parentNode.childNodes.remove(item_num);
         parentNode = null;
     }
 }

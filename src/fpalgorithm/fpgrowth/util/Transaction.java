@@ -7,12 +7,8 @@ public class Transaction {
     private List<Integer> itemContent;
     private int count = 1;
 
-    public Transaction() {}
     public Transaction(List<Integer> content) {
         itemContent = content;
-    }
-    public Transaction(int count) {
-        this.count = count;
     }
     public Transaction(List<Integer> content, int count) {
         itemContent = content;

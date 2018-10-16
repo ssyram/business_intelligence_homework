@@ -18,7 +18,7 @@ public class AssociationRuleBuilder {
      * be modified, it will return all and not repeated (of course, no swap)
      * two-division sets in the whole process
      */
-    Set<AssociationRule> build(FrequentSetContainer frequentSets) {
+    public static Set<AssociationRule> build(FrequentSetContainer frequentSets) {
         Set<AssociationRule> rules = new HashSet<>();
 
         for (FrequentSet fs: frequentSets) {

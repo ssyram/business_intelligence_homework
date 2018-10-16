@@ -2,7 +2,6 @@ package fpalgorithm.apriori.enhance.util;
 
 import com.sun.istack.internal.NotNull;
 import fpalgorithm.apriori.util.UtilFuncs;
-import fpalgorithm.fpgrowth.util.Transaction;
 import fpalgorithm.util.result.FrequentSet;
 import javafx.util.Pair;
 
@@ -11,10 +10,16 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class EnhancedFrequentSet extends FrequentSet {
+    public static int support_threshold;
     private Set<Integer> transactionSet;
 
     public EnhancedFrequentSet(@NotNull Set<Integer> itemSet, @NotNull Set<Integer> transactionSet) {
         super(itemSet, transactionSet.size());
+        this.transactionSet = transactionSet;
+    }
+    public EnhancedFrequentSet(int onlyElement, @NotNull Set<Integer> transactionSet) {
+        super(new HashSet<>(), transactionSet.size());
+        super.getSet().add(onlyElement);
         this.transactionSet = transactionSet;
     }
 

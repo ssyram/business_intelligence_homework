@@ -29,7 +29,7 @@ public class Algorithm {
         }
 
         // core, to joinIfJoinable if temp is joinable
-        for (int round = 2; true; ++round) {
+        for (; true; ) {
             FrequentSet[] at = (FrequentSet[]) temp.toArray(); // array temp
             r.addAll(temp);
             temp = new HashSet<>();

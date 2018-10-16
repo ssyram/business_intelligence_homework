@@ -40,12 +40,7 @@ public class FpListItem {
     public FpTreeNode getFirst() {
         return first;
     }
-    public FpTreeNode getLast() {
-        return last;
-    }
-    public void addCount() {
-        ++count;
-    }
+
     public void addCount(int additionalCount) {
         this.count += additionalCount;
     }

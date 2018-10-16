@@ -1,8 +1,8 @@
 package fpalgorithm.util.result;
 
 import javafx.util.Pair;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,6 +14,20 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
     public FrequentSet(Set<Integer> set, int support_count) {
         this.set = set;
         this.support_count = support_count;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("(");
+
+        for (Integer i: set)
+            builder.append(i).append(", ");
+
+        builder .replace(builder.length() - 2, builder.length(), ")[")
+                .append(support_count)
+                .append("]");
+
+        return builder.toString();
     }
 
     public Set<Integer> getSet() {
@@ -56,6 +70,7 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
      * without repetition which here includes swap
      */
     @Override
+    @NotNull
     public Iterator<Pair<Set<Integer>, Set<Integer>>> iterator() {
         if (set.size() > 31)
             throw new RuntimeException("running out of memory.");
