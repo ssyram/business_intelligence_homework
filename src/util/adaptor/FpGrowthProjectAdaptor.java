@@ -11,7 +11,7 @@ import util.GlobalInfo;
 import java.util.*;
 
 public class FpGrowthProjectAdaptor {
-    FrequentSetContainer runFpGrowth() {
+    public static FrequentSetContainer runFpGrowth() {
         Pair<ArrayList<FpListItem>, HashMap<Integer, Integer>> database_info = DatabaseOperator.getFpItemCount();
         List<FpListItem> orderedItemSet = database_info.getKey();
         Map<Integer, Integer> item_orderMap = database_info.getValue();

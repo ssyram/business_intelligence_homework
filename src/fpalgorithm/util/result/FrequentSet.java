@@ -1,7 +1,6 @@
 package fpalgorithm.util.result;
 
 import javafx.util.Pair;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,7 +69,6 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
      * without repetition which here includes swap
      */
     @Override
-    @NotNull
     public Iterator<Pair<Set<Integer>, Set<Integer>>> iterator() {
         if (set.size() > 31)
             throw new RuntimeException("running out of memory.");

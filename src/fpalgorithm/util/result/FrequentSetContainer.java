@@ -1,7 +1,6 @@
 package fpalgorithm.util.result;
 
 import com.sun.istack.internal.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -101,7 +100,6 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
     }
 
     @Override
-    @NotNull
     public Iterator<FrequentSet> iterator() {
 //      HashMap<Long, HashMap<Long, Set<FrequentSet>>>
         return new Iterator<FrequentSet>() {

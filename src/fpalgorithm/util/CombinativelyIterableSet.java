@@ -14,7 +14,6 @@ public class CombinativelyIterableSet<T> implements Iterable<Set<T>> {
     }
 
     @Override
-    @org.jetbrains.annotations.NotNull
     public Iterator<Set<T>> iterator() {
         return new Iterator<Set<T>>() {
             T[] va = (T[]) v.toArray();
