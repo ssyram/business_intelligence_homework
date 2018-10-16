@@ -78,8 +78,7 @@ public class DatabaseOperator {
      * @return a pair of frequent item set and a map of frequent item and corresponding set of
      * transactions that contains the specific frequent item
      */
-    public static Pair<Set<Integer>, Map<Integer, Set<Integer>>> getFrequentItemAndTransactionMap() {
-        Set<Integer> frequentItemSet = new HashSet<>();
+    public static Map<Integer, Set<Integer>> getFrequentItem_TransactionMap() {
         Map<Integer, Set<Integer>> item_transactionsMap = new HashMap<>();
 
         try {
@@ -87,14 +86,12 @@ public class DatabaseOperator {
 
             set.next();
             int temp = set.getInt(1);
-            frequentItemSet.add(temp);
             item_transactionsMap.put(temp, new HashSet<>());
             item_transactionsMap.get(temp).add(set.getInt(2));
 
             while (set.next()) {
                 if (set.getInt(1) != temp) {
                     temp = set.getInt(1);
-                    frequentItemSet.add(temp);
                     item_transactionsMap.put(temp, new HashSet<>());
                 }
 
@@ -104,7 +101,7 @@ public class DatabaseOperator {
             e.printStackTrace();
         }
 
-        return new Pair<>(frequentItemSet, item_transactionsMap);
+        return item_transactionsMap;
     }
 
     private static final String GET_ITEM_COUNT_SQL = "select item_num, count(*) as cnt " +
