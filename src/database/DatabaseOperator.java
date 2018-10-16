@@ -25,7 +25,7 @@ public class DatabaseOperator {
 
             GlobalInfo.total_support = (int)(GlobalInfo.record_amount * GlobalInfo.Supportive);
 
-            set.close();
+            closeExecute(set);
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class DatabaseOperator {
             }
             l.add(new Transaction(li));
 
-            set.close();
+            closeExecute(set);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -99,11 +99,22 @@ public class DatabaseOperator {
 
                 item_transactionsMap.get(temp).add(set.getInt(2));
             }
+
+            closeExecute(set);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return item_transactionsMap;
+    }
+
+    private static void closeExecute(ResultSet set) {
+        try {
+            set.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        closeStatement();
     }
 
     private static final String GET_ITEM_COUNT_SQL = "select item_num, count(*) as cnt " +
@@ -112,12 +123,20 @@ public class DatabaseOperator {
             "having cnt > " + GlobalInfo.total_support +
             "order by cnt, item_num desc;";
 
+    private static Statement executeStatement;
+
     private static ResultSet execute(String sql) throws SQLException {
-        Statement stmt = Connector.getConnection().createStatement();
-        ResultSet set = stmt.executeQuery(sql);
-        stmt.close();
-        Connector.closeConnection();
-        return set;
+        executeStatement = Connector.getConnection().createStatement();
+
+        return  executeStatement.executeQuery(sql);
+    }
+
+    private static void closeStatement() {
+        try {
+            executeStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Statement insertStmt;
@@ -155,7 +174,7 @@ public class DatabaseOperator {
                 r.put(set.getInt(1), set.getInt(2));
             }
 
-            set.close();
+            closeExecute(set);
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -182,7 +201,7 @@ public class DatabaseOperator {
                 rm.put(set.getInt(1), i++);
             }
 
-            set.close();
+            closeExecute(set);
         }
         catch (SQLException e) {
             e.printStackTrace();
