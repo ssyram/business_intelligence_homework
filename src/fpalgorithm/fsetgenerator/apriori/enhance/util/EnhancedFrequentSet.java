@@ -1,8 +1,8 @@
-package fpalgorithm.apriori.enhance.util;
+package fpalgorithm.fsetgenerator.apriori.enhance.util;
 
 import com.sun.istack.internal.NotNull;
-import fpalgorithm.apriori.util.UtilFuncs;
-import fpalgorithm.util.result.FrequentSet;
+import fpalgorithm.fsetgenerator.apriori.util.UtilFuncs;
+import fpalgorithm.fsetgenerator.util.result.FrequentSet;
 import javafx.util.Pair;
 
 import java.util.HashSet;

@@ -1,13 +1,12 @@
-package fpalgorithm.fpgrowth;
+package fpalgorithm.fsetgenerator.fpgrowth;
 
-import fpalgorithm.util.CombinativelyIterableSet;
-import fpalgorithm.util.result.FrequentSetContainer;
-import fpalgorithm.util.result.FrequentSet;
-import fpalgorithm.fpgrowth.util.FpListItem;
-import fpalgorithm.fpgrowth.util.FpTreeNode;
-import fpalgorithm.fpgrowth.util.Transaction;
+import fpalgorithm.fsetgenerator.util.CombinativelyIterableSet;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
+import fpalgorithm.fsetgenerator.util.result.FrequentSet;
+import fpalgorithm.fsetgenerator.fpgrowth.util.FpListItem;
+import fpalgorithm.fsetgenerator.fpgrowth.util.FpTreeNode;
+import fpalgorithm.fsetgenerator.fpgrowth.util.Transaction;
 import javafx.util.Pair;
-import util.GlobalInfo;
 
 import java.util.*;
 
@@ -98,6 +97,8 @@ public class Algorithm {
         }
         else
             for (int i = orderedItemList.size() - 1; i >= 0; --i) {
+                if (postFixKeySet.size() != 0)
+                    r.add(new FrequentSet(new HashSet<>(postFixKeySet), support_count));
                 FpListItem item = orderedItemList.get(i);
                 // get cpb and corresponding itemSet
                 Pair<List<Transaction>, List<FpListItem>> analyzedData = analyzePath(item);

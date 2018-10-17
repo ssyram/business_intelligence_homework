@@ -1,4 +1,4 @@
-package fpalgorithm.fpgrowth.util;
+package fpalgorithm.fsetgenerator.fpgrowth.util;
 
 public class FpListItem {
     private int key;

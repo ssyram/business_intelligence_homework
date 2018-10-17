@@ -1,4 +1,4 @@
-package fpalgorithm.fpgrowth.util;
+package fpalgorithm.fsetgenerator.fpgrowth.util;
 
 import com.sun.istack.internal.NotNull;
 

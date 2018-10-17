@@ -1,8 +1,8 @@
 package util.adaptor.apriori;
 
 import database.DatabaseOperator;
-import fpalgorithm.apriori.Algorithm;
-import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.fsetgenerator.apriori.Algorithm;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import util.GlobalInfo;
 
 import java.util.Map;

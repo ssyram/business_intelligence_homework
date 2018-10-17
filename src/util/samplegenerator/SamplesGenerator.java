@@ -3,6 +3,7 @@ package util.samplegenerator;
 import database.DatabaseOperator;
 import util.samplegenerator.util.GaussianGenerator;
 
+import java.security.InvalidParameterException;
 import java.sql.SQLException;
 
 public class SamplesGenerator {
@@ -27,6 +28,8 @@ public class SamplesGenerator {
             int minLength,
             int maxLength
     ) {
+        parameterValidate(item_amount, transaction_amount, avg_item_num, avg_item_amount, item_standard_variance, item_amount_standard_variance, minLength, maxLength);
+
         GaussianGenerator itemGenerator = new GaussianGenerator(avg_item_num, item_standard_variance, 0, item_amount + 1);
         GaussianGenerator lengthGenerator = new GaussianGenerator(avg_item_amount, item_amount_standard_variance, minLength, maxLength + 1);
 
@@ -54,6 +57,31 @@ public class SamplesGenerator {
         }
 
         DatabaseOperator.endInsert();
+    }
+
+    private static void parameterValidate(
+            int item_amount,
+            int transaction_amount,
+            int avg_item_num,
+            int avg_item_amount,
+            double item_standard_variance,
+            double item_amount_standard_variance,
+            int minLength,
+            int maxLength
+    ) {
+        assert (
+                item_amount > 0 &&
+                transaction_amount > 0 &&
+                avg_item_num > 0 &&
+                avg_item_amount > 0 &&
+                item_standard_variance > 0 &&
+                item_amount_standard_variance > 0 &&
+                minLength > 0 &&
+                maxLength > 0
+        );
+
+        assert (item_amount < maxLength && item_amount > minLength);
+        assert (avg_item_num < item_amount);
     }
 
     public static void generate(int item_amount, int transaction_amount) {

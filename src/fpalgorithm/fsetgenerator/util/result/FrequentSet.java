@@ -1,4 +1,4 @@
-package fpalgorithm.util.result;
+package fpalgorithm.fsetgenerator.util.result;
 
 import javafx.util.Pair;
 

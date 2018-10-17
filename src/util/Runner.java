@@ -1,6 +1,7 @@
 package util;
 
-import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.AssociationRuleBuilder;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import util.adaptor.FpGrowthProjectAdaptor;
 import util.adaptor.apriori.AprioriProjectAdaptor;
 import util.result.AssociationRule;
@@ -28,7 +29,7 @@ public class Runner {
         FrequentSetContainer frequentSets = adaptor.run();
         if (debug)
             output(frequentSets, fileOutput, "test/frequent_set.txt");
-        Set<AssociationRule> rules = AssociationRuleBuilder.build(frequentSets);
+        Set<AssociationRule> rules = AssociationRuleBuilder.build(frequentSets, GlobalInfo.confidence_threshold);
         output(rules, fileOutput, "rules.txt");
 
     }

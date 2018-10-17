@@ -1,10 +1,10 @@
-package fpalgorithm.apriori;
+package fpalgorithm.fsetgenerator.apriori;
 
-import fpalgorithm.apriori.util.IQuerySupportive;
-import fpalgorithm.apriori.util.UtilFuncs;
-import fpalgorithm.util.CombinativelyIterableSet;
-import fpalgorithm.util.result.FrequentSet;
-import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.fsetgenerator.apriori.util.IQuerySupportive;
+import fpalgorithm.fsetgenerator.apriori.util.UtilFuncs;
+import fpalgorithm.fsetgenerator.util.CombinativelyIterableSet;
+import fpalgorithm.fsetgenerator.util.result.FrequentSet;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import javafx.util.Pair;
 
 import java.util.HashSet;

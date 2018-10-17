@@ -1,11 +1,10 @@
 package database;
 
-import fpalgorithm.fpgrowth.util.FpListItem;
-import fpalgorithm.fpgrowth.util.Transaction;
+import fpalgorithm.fsetgenerator.fpgrowth.util.FpListItem;
+import fpalgorithm.fsetgenerator.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 
-import javax.sound.midi.Soundbank;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -42,12 +41,14 @@ public class DatabaseOperator {
             if (set.next())
                 GlobalInfo.record_amount = set.getInt(1);
 
-            GlobalInfo.total_support = (int)(GlobalInfo.record_amount * GlobalInfo.Supportive);
+            double d = GlobalInfo.record_amount * GlobalInfo.Supportive;
 
-            System.out.println("types amount: " + GlobalInfo.item_type_amount);
-            System.out.println("transactions amount: " + GlobalInfo.record_amount);
-            System.out.println("support threshold: " + GlobalInfo.Supportive);
-            System.out.println("total support: " + GlobalInfo.total_support);
+            GlobalInfo.total_support = (int) Math.ceil(d);
+
+//            System.out.println("types amount: " + GlobalInfo.item_type_amount);
+//            System.out.println("transactions amount: " + GlobalInfo.record_amount);
+//            System.out.println("support threshold: " + GlobalInfo.Supportive);
+//            System.out.println("total support: " + GlobalInfo.total_support);
 
             closeExecute(set);
         }catch(Exception e) {
@@ -205,7 +206,7 @@ public class DatabaseOperator {
 
             while (set.next()) {
                 r.put(set.getInt(1), set.getInt(2));
-                System.out.println(set.getInt(1) + ": " + set.getInt(2));
+//                System.out.println(set.getInt(1) + ": " + set.getInt(2));
             }
 
             closeExecute(set);

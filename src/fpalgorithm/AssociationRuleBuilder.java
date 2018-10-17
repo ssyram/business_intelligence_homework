@@ -1,9 +1,10 @@
-package util;
+package fpalgorithm;
 
-import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import javafx.util.Pair;
+import util.GlobalInfo;
 import util.result.AssociationRule;
-import fpalgorithm.util.result.FrequentSet;
+import fpalgorithm.fsetgenerator.util.result.FrequentSet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ public class AssociationRuleBuilder {
      * be modified, it will return all and not repeated (of course, no swap)
      * two-division sets in the whole process
      */
-    public static Set<AssociationRule> build(FrequentSetContainer frequentSets) {
+    public static Set<AssociationRule> build(FrequentSetContainer frequentSets, double confidence_threshold) {
         Set<AssociationRule> rules = new HashSet<>();
 
         for (FrequentSet fs: frequentSets) {
@@ -26,8 +27,7 @@ public class AssociationRuleBuilder {
                 FrequentSet left = frequentSets.find(left_right_pair.getKey());
                 FrequentSet right = frequentSets.find(left_right_pair.getValue());
 
-                if (fs.getSupport_count() / left.getSupport_count() >= GlobalInfo
-                        .confidence_threshold)
+                if (fs.getSupport_count() / left.getSupport_count() >= confidence_threshold)
                     rules.add(
                             new AssociationRule(
                                     left_right_pair.getKey(),
@@ -37,8 +37,7 @@ public class AssociationRuleBuilder {
                             )
                     );
 
-                if (fs.getSupport_count() / right.getSupport_count() >= GlobalInfo
-                        .confidence_threshold)
+                if (fs.getSupport_count() / right.getSupport_count() >= confidence_threshold)
                     rules.add(
                             new AssociationRule(
                                     left_right_pair.getValue(),

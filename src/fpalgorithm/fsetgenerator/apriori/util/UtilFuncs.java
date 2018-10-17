@@ -1,6 +1,5 @@
-package fpalgorithm.apriori.util;
+package fpalgorithm.fsetgenerator.apriori.util;
 
-import fpalgorithm.util.result.FrequentSet;
 import javafx.util.Pair;
 
 import java.util.HashSet;

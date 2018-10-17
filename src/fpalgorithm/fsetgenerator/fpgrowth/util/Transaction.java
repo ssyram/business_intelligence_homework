@@ -1,4 +1,4 @@
-package fpalgorithm.fpgrowth.util;
+package fpalgorithm.fsetgenerator.fpgrowth.util;
 
 import java.util.ArrayList;
 import java.util.List;

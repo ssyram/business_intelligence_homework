@@ -1,7 +1,7 @@
-package fpalgorithm.apriori.enhance;
+package fpalgorithm.fsetgenerator.apriori.enhance;
 
-import fpalgorithm.apriori.enhance.util.EnhancedFrequentSet;
-import fpalgorithm.util.result.FrequentSetContainer;
+import fpalgorithm.fsetgenerator.apriori.enhance.util.EnhancedFrequentSet;
+import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 
 import java.util.HashSet;
 import java.util.Map;

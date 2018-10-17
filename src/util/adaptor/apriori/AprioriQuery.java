@@ -1,7 +1,7 @@
 package util.adaptor.apriori;
 
 import com.sun.istack.internal.Nullable;
-import fpalgorithm.apriori.util.IQuerySupportive;
+import fpalgorithm.fsetgenerator.apriori.util.IQuerySupportive;
 
 import java.util.HashSet;
 import java.util.Iterator;

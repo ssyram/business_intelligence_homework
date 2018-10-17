@@ -1,4 +1,4 @@
-package fpalgorithm.util;
+package fpalgorithm.fsetgenerator.util;
 
 import com.sun.istack.internal.NotNull;
 

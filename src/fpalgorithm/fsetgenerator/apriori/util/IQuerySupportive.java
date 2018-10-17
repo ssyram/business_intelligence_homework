@@ -1,4 +1,4 @@
-package fpalgorithm.apriori.util;
+package fpalgorithm.fsetgenerator.apriori.util;
 
 import java.util.Set;
 
