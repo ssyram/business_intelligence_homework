@@ -31,7 +31,9 @@ Then, use Class AssociationRuleBuilder for the FrequentSetContainer result you g
 
 ### 2. Use the whole project
 
-Append a 
+#### database setting
+
+Append a file named
 
 The package fpalgorithm is the core of this project, which contains, fsetgenerator standing for "frequent set generator" inside which is the algorithm of Apriori and Fp-Growth for generating frequent sets, and also the AssociationRuleBuilder, which is used to generate a set of association rules.
 
