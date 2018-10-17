@@ -30,6 +30,7 @@ public class Runner {
             output(frequentSets, fileOutput, "test/frequent_set.txt");
         Set<AssociationRule> rules = AssociationRuleBuilder.build(frequentSets);
         output(rules, fileOutput, "rules.txt");
+
     }
 
     private static void output(
@@ -38,7 +39,13 @@ public class Runner {
             String name
     ) {
         if (!fileOutput) {
-            System.out.println(container.toString());
+            if (container instanceof FrequentSetContainer)
+                System.out.println(container.toString());
+            else {
+                for (AssociationRule rule : (Set<AssociationRule>) container)
+                    System.out.println(rule.toString());
+                System.out.println("size: " + ((Set<AssociationRule>) container).size() + ".");
+            }
             return;
         }
 
@@ -51,7 +58,13 @@ public class Runner {
         try {
             file.createNewFile();
             FileWriter fileWriter = new FileWriter(file.getName(), true);
-            fileWriter.write(container.toString());
+            if (container instanceof FrequentSetContainer)
+                fileWriter.write(container.toString());
+            else {
+                for (AssociationRule rule : (Set<AssociationRule>) container)
+                    fileWriter.append(rule.toString());
+                fileWriter.append("size: " + ((Set<AssociationRule>) container).size() + ".");
+            }
             fileWriter.close();
 
             System.out.println("output finished.");

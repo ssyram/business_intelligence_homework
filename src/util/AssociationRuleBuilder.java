@@ -26,24 +26,24 @@ public class AssociationRuleBuilder {
                 FrequentSet left = frequentSets.find(left_right_pair.getKey());
                 FrequentSet right = frequentSets.find(left_right_pair.getValue());
 
-                if (fs.getSupport_count() / left.getSupport_count() > GlobalInfo
+                if (fs.getSupport_count() / left.getSupport_count() >= GlobalInfo
                         .confidence_threshold)
                     rules.add(
                             new AssociationRule(
                                     left_right_pair.getKey(),
                                     left_right_pair.getValue(),
-                                    fs.getSupport_count() / GlobalInfo.total_support,
+                                    fs.getSupport_count() / GlobalInfo.record_amount,
                                     fs.getSupport_count() / left.getSupport_count()
                             )
                     );
 
-                if (fs.getSupport_count() / right.getSupport_count() > GlobalInfo
+                if (fs.getSupport_count() / right.getSupport_count() >= GlobalInfo
                         .confidence_threshold)
                     rules.add(
                             new AssociationRule(
                                     left_right_pair.getValue(),
                                     left_right_pair.getKey(),
-                                    fs.getSupport_count() / GlobalInfo.total_support,
+                                    fs.getSupport_count() / GlobalInfo.record_amount,
                                     fs.getSupport_count() / right.getSupport_count()
                             )
                     );

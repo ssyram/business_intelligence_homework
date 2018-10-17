@@ -50,6 +50,8 @@ public class FpTreeNode {
         return childNodes.size();
     }
     public FpTreeNode getOnlyChildNode() {
+        if (childNodes.size() == 0)
+            return null;
         if (childNodes.size() != 1)
             throw new RuntimeException("it's not only child now");
 

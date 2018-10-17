@@ -3,9 +3,9 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class Connector {
+class Connector {
     private static Connection con;
-    public static Connection connect() {
+    private static Connection connect() {
         try {
             Class.forName(ConnectInfo.driver);
             con = DriverManager.getConnection(ConnectInfo.url, ConnectInfo.username, ConnectInfo.password);
@@ -25,7 +25,7 @@ public class Connector {
         return con;
     }
 
-    public static void closeConnection() {
+    static void closeConnection() {
         try {
             con.close();
             con = null;

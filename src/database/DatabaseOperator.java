@@ -5,6 +5,7 @@ import fpalgorithm.fpgrowth.util.Transaction;
 import javafx.util.Pair;
 import util.GlobalInfo;
 
+import javax.sound.midi.Soundbank;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,13 +33,12 @@ public class DatabaseOperator {
             GlobalInfo.Supportive = support_threshold;
             GlobalInfo.confidence_threshold = confidence_threshold;
 
-            ResultSet set = execute("select count(item_num) from transactions group by item_num;");
+            ResultSet set = execute("select count(*) from (select count(item_num) from transactions group by item_num) r;");
             if (set.next())
                 GlobalInfo.item_type_amount = set.getInt(1);
             set.close();
 
-            set = execute("select count(transaction_num) from transactions group by " +
-                    "transaction_num");
+            set = execute("select count(*) from (select count(transaction_num) from transactions group by transaction_num) r;");
             if (set.next())
                 GlobalInfo.record_amount = set.getInt(1);
 
@@ -58,7 +58,7 @@ public class DatabaseOperator {
     private static final String GET_ALL_TRANSACTIONS =
                     "select * " +
                     "from transactions " +
-                    "group by transaction_num " +
+                    "group by transaction_num, item_num " +
                     "order by transaction_num, item_num desc;";
 
     public static List<Transaction> getTransactions() {
@@ -91,16 +91,16 @@ public class DatabaseOperator {
     }
 
     private static final String SELECT_FREQUENT_ITEM_TRANSACTION_MAP =
-            "select item_num, transaction_num" +
-                    "from transactions" +
+            "select item_num, transaction_num " +
+                    "from transactions " +
                     "where item_num in (" +
-                        "select item_num" +
+                        "select item_num " +
                         "from (" +
-                            "select item_num, count(*) as cnt" +
-                            "from transactions" +
-                            "group by item_num" +
-                            "having cnt > " + GlobalInfo.total_support +
-                        ")" +
+                            "select item_num, count(*) as cnt " +
+                            "from transactions rn " +
+                            "group by item_num " +
+                            "having cnt >= " + GlobalInfo.total_support +
+                        ") rnn" +
                     ")" +
                     "order by item_num desc;";
 
@@ -130,6 +130,7 @@ public class DatabaseOperator {
 
             closeExecute(set);
         } catch (SQLException e) {
+//            System.out.println(SELECT_FREQUENT_ITEM_TRANSACTION_MAP);
             e.printStackTrace();
         }
 
@@ -148,20 +149,23 @@ public class DatabaseOperator {
     private static final String GET_ITEM_COUNT_SQL = "select item_num, count(*) as cnt " +
             "from transactions " +
             "group by item_num " +
-            "having cnt > " + GlobalInfo.total_support +
-            "order by cnt, item_num desc;";
+            "having cnt >= " + GlobalInfo.total_support + " " +
+            "order by cnt desc, item_num desc;";
 
     private static Statement executeStatement;
 
     private static ResultSet execute(String sql) throws SQLException {
+        ResultSet resultSet = null;
         try {
             executeStatement = Connector.getConnection().createStatement();
+            resultSet = executeStatement.executeQuery(sql);
         } catch (SQLException e) {
+            System.out.println(sql);
             e.printStackTrace();
-            throw new SQLException("cause sentence: " + sql, e);
+            System.exit(-1);
         }
 
-        return  executeStatement.executeQuery(sql);
+        return resultSet;
     }
 
     private static void closeStatement() {
@@ -201,11 +205,13 @@ public class DatabaseOperator {
 
             while (set.next()) {
                 r.put(set.getInt(1), set.getInt(2));
+                System.out.println(set.getInt(1) + ": " + set.getInt(2));
             }
 
             closeExecute(set);
         }
         catch (SQLException e) {
+//            System.out.println(GET_ITEM_COUNT_SQL);
             e.printStackTrace();
         }
 
@@ -227,6 +233,7 @@ public class DatabaseOperator {
 
             while (set.next()) {
                 r.add(new FpListItem(set.getInt(1)));
+//                System.out.println(set.getInt(1) + ": " + set.getInt(2));
                 rm.put(set.getInt(1), i++);
             }
 

@@ -13,15 +13,19 @@ public class CombinativelyIterableSet<T> implements Iterable<Set<T>> {
         v = set;
     }
 
+    public int size() {
+        return v.size();
+    }
+
     @Override
     public Iterator<Set<T>> iterator() {
         return new Iterator<Set<T>>() {
-            T[] va = (T[]) v.toArray();
-            long pattern = 0;
+            Object[] va = v.toArray();
+            long pattern = -1;
             long max = (1 << va.length) - 1;
             @Override
             public boolean hasNext() {
-                return pattern == max;
+                return pattern != max;
             }
 
             @Override
@@ -33,7 +37,7 @@ public class CombinativelyIterableSet<T> implements Iterable<Set<T>> {
                 for (int j = 0; j < va.length; ++j) {
                     long k = (1 << j);
                     if (j > pattern) break;
-                    if ((pattern & k) != 0) s.add(va[j]);
+                    if ((pattern & k) != 0) s.add((T) va[j]);
                 }
                 return s;
             }

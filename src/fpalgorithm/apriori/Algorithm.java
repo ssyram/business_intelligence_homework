@@ -30,7 +30,7 @@ public class Algorithm {
 
         // core, to joinIfJoinable if temp is joinable
         for (; true; ) {
-            FrequentSet[] at = (FrequentSet[]) temp.toArray(); // array temp
+            FrequentSet[] at = temp.toArray(new FrequentSet[0]); // array temp
             r.addAll(temp);
             temp = new HashSet<>();
             for (int i = 0; i < at.length; ++i)
@@ -70,8 +70,10 @@ public class Algorithm {
             IQuerySupportive query,
             int support_threshold
     ) {
-        int support = query.quire(r);
-        if (support > support_threshold)
+        // if it's lower than threshold, it returns -1
+        // or it returns the actual support number of r
+        int support = query.quire(r, support_threshold);
+        if (support > 0)
             return new FrequentSet(r, support);
 
         return null;
@@ -86,10 +88,10 @@ public class Algorithm {
         if (wfcSet == null)
             return distinctSet;
 
-        if (trimAccordance.find(distinctSet) == null) return null;
-
         CombinativelyIterableSet<Integer> cis = new CombinativelyIterableSet<>(wfcSet);
         for (Set<Integer> s: cis) {
+            if (s.size() == cis.size())
+                break;
             s.addAll(distinctSet);
             if (trimAccordance.find(s) == null) return null;
         }

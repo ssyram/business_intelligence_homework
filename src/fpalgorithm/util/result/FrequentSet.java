@@ -15,8 +15,14 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
         this.support_count = support_count;
     }
 
+    public int size() {
+        return set.size();
+    }
+
     @Override
     public String toString() {
+        if (set.isEmpty())
+            return "\n";
         StringBuilder builder = new StringBuilder("(");
 
         for (Integer i: set)
@@ -77,12 +83,12 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
              * means contemporary set type
              */
             long type = 0;
-            long max = (1 << (set.size() - 1));
-            Integer[] s = (Integer[]) set.toArray();
+            long max = (1 << (set.size() - 1)) - 1;
+            Integer[] s = set.toArray(new Integer[0]);
 
             @Override
             public boolean hasNext() {
-                return type == max;
+                return (type != max);
             }
 
             @Override
@@ -90,8 +96,9 @@ public class FrequentSet implements Iterable<Pair<Set<Integer>, Set<Integer>>> {
                 Set<Integer> small = new HashSet<>();
                 Set<Integer> big = new HashSet<>();
                 ++type;
-                for (int i = 0; i < set.size() - 1; ++i)
-                    if ((type ^ (1 << i)) != 0)
+                final int size = set.size(); // to prevent cache miss
+                for (int i = 0; i < size; ++i)
+                    if ((type & (1 << i)) != 0)
                         small.add(s[i]);
                     else
                         big.add(s[i]);

@@ -25,7 +25,7 @@ public class Algorithm {
             );
 
         for ( ; ; ) {
-            EnhancedFrequentSet[] at = (EnhancedFrequentSet[]) temp.toArray();
+            EnhancedFrequentSet[] at = temp.toArray(new EnhancedFrequentSet[0]);
             r.addAll(temp);
 
             temp = new HashSet<>();

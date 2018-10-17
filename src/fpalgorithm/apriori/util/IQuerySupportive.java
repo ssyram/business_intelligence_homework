@@ -4,5 +4,9 @@ import java.util.Set;
 
 @FunctionalInterface
 public interface IQuerySupportive {
-    int quire(Set<Integer> condition);
+
+    /**
+     * @return if lower than threshold, return -1
+     */
+    int quire(Set<Integer> condition, int threshold);
 }

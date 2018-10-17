@@ -77,9 +77,17 @@ public class Algorithm {
             int support_count,
             int support_threshold
     ) {
+        // when it's the last element, add itself and return
+        if (orderedItemList.isEmpty()) {
+            Set<Integer> s = new HashSet<>(postFixKeySet);
+//            if (postFixKeySet.size() != 1)
+//                throw new RuntimeException("the post fix key set of the last item should be have only one element.");
+            r.add(new FrequentSet(s, support_count));
+            return;
+        }
         FpTreeNode root = orderedItemList.get(0).getFirst().getParentNode();
-        if (!root.isRoot())
-            throw new RuntimeException("not a valid orderedItemList");
+//        if (!root.isRoot())
+//            throw new RuntimeException("not a valid orderedItemList");
         trimTree(orderedItemList, support_threshold);
         if (isSingleBranch(root)) {
             Set<Integer> waitForCombineSet = new HashSet<>();
@@ -103,7 +111,7 @@ public class Algorithm {
 
                 Map<Integer, Integer> nioMap = new HashMap<>();
                 for (int j = 0; j < analyzedData.getValue().size(); ++j)
-                    nioMap.put(itemList.get(i).getKey(), i);
+                    nioMap.put(itemList.get(j).getKey(), j);
 
                 createTree(itemList, transactions, nioMap, false);
                 postFixKeySet.add(item.getKey());
@@ -160,18 +168,27 @@ public class Algorithm {
 //        }
         CombinativelyIterableSet<Integer> cis = new CombinativelyIterableSet<>(waitForCombineSet);
         for (Set<Integer> s: cis) {
+            int minCount = minCountOfSS(s, orderedItemList, item_orderMap);
             s.addAll(postFixKeySet);
-            if (support_count < 0)
-                r.add(new FrequentSet(s, minCountOfSS(s, orderedItemList, item_orderMap)));
+            if (support_count < 0) {
+                if (!s.isEmpty())
+                    r.add(new FrequentSet(s, minCount));
+            }
             else
-                r.add(new FrequentSet(s, support_count));
+                r.add(new FrequentSet(s, minCount > support_count ? support_count : minCount));
         }
     }
 
     /**
-     * must happen when the first time is a single branch
+     * @return if ss is empty, return infinite -- maximum int
      */
-    private static int minCountOfSS(Set<Integer> ss, List<FpListItem> orderedItemList, Map<Integer, Integer> item_orderMap) {
+    private static int minCountOfSS(
+            Set<Integer> ss,
+            List<FpListItem> orderedItemList,
+            Map<Integer, Integer> item_orderMap
+    ) {
+        if (ss.size() == 0)
+            return (int) (((long)1 << 31) - 1);
         boolean fixMin = false;
         int min = 0;
         for (int i: ss) {
@@ -199,7 +216,7 @@ public class Algorithm {
     private static void trimTree(List<FpListItem> orderedItemList, int support_threshold) {
         for (int i = orderedItemList.size() - 1; i >= 0; --i) {
             FpListItem item = orderedItemList.get(i);
-            if (item.getCount() >= GlobalInfo.total_support)
+            if (item.getCount() >= support_threshold)
                 return;
 
             for (FpTreeNode node = item.getFirst(); node != null; node = node.getNext())
@@ -209,9 +226,9 @@ public class Algorithm {
     }
 
     private static Pair<List<Transaction>, List<FpListItem>> analyzePath(FpListItem item) {
-        Set<Integer> checkRs = new HashSet<>();
-        List<Transaction> rt = new ArrayList<>();
-        List<FpListItem> rs = new ArrayList<>();
+        Set<Integer> checkRs = new HashSet<>(); // use for checking if things should add to itemList
+        List<Transaction> rt = new ArrayList<>(); //
+        List<FpListItem> rs = new ArrayList<>(); // the new itemList
         for (FpTreeNode node = item.getFirst(); node != null; node = node.getNext()) {
             List<Integer> cpb = new ArrayList<>();
             for (FpTreeNode nnode = node.getParentNode(); !nnode.isRoot(); nnode = nnode.getParentNode()) {

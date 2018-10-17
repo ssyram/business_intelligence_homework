@@ -7,6 +7,11 @@ import java.io.*;
 import java.sql.SQLException;
 
 public class TestRunner {
+
+    public static void runRulesGenerator(int testSampleNum) {
+        
+    }
+
     public static void runApriori(int testSampleNum) {
         try {
             generateSampleTransactions(testSampleNum);
@@ -14,7 +19,7 @@ public class TestRunner {
             e.printStackTrace();
             System.exit(-1);
         }
-        Runner.runApriori(true, true);
+        Runner.runApriori(true, false);
     }
 
     public static void runFpGrowth(int testSampleNum) {
@@ -24,7 +29,7 @@ public class TestRunner {
             e.printStackTrace();
             System.exit(-1);
         }
-        Runner.runFpGrowth(true, true);
+        Runner.runFpGrowth(true, false);
     }
 
     private static void generateSampleTransactions(int fileNum) throws IOException {
@@ -34,9 +39,9 @@ public class TestRunner {
         StringBuilder builder = new StringBuilder("insert into transactions values(");
         int bsl = builder.length();
 
-        DatabaseOperator.startInsert();
-
         DatabaseOperator.emptyDatabase();
+
+        DatabaseOperator.startInsert();
 
         for (int i = 0; (s = reader.readLine()) != null; ++i) {
             String[] ss = s.split(" ");
@@ -52,6 +57,7 @@ public class TestRunner {
                     DatabaseOperator.continueInsert(builder.toString());
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    System.exit(-1);
                 }
                 builder.delete(sl, builder.length());
             }

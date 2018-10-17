@@ -42,12 +42,23 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
         v.get(l).get(m).add(set);
     }
 
+    public int size() {
+        int i = 0;
+        for (Long l: v.keySet())
+            for (Long ll: v.get(l).keySet())
+                i += v.get(l).get(ll).size();
+
+        return i;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
         for (FrequentSet set: this)
             builder.append(set.toString()).append("\n");
+
+        builder.append("size: ").append(size()).append(".");
 
         return builder.toString();
     }
@@ -61,7 +72,7 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
 
     public FrequentSet find(Set<Integer> itemSet) {
         long l = 0;
-        long m = 0;
+        long m = 1;
         for (int i: itemSet) {
             l += i;
             m *= i;
