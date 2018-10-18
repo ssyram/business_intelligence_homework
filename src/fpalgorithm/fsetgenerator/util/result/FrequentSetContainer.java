@@ -18,6 +18,9 @@ public class FrequentSetContainer implements Iterable<FrequentSet> {
             m *= i;
         }
 
+        if (l == (48 + 49 +51) && m == (48 * 49 * 51))
+            System.out.println("now");
+
         // have the same meaning of:
 //        if (v.get(l) == null)
 //            v.put(l, new HashSet<>());

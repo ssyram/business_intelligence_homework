@@ -5,7 +5,7 @@ import database.DatabaseOperator;
 public class GlobalInfo {
 
     static {
-        DatabaseOperator.loadGlobalInfo(0.2, 0.8);
+        DatabaseOperator.loadGlobalInfo(2.0/7, 0.5);
     }
 
     public static double Supportive;

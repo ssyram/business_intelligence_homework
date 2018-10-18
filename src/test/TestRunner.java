@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class TestRunner {
 
     public static void runRulesGenerator(int testSampleNum) {
-        
+
     }
 
     public static void runApriori(int testSampleNum) {
@@ -32,7 +32,7 @@ public class TestRunner {
         Runner.runFpGrowth(true, false);
     }
 
-    private static void generateSampleTransactions(int fileNum) throws IOException {
+    public static void generateSampleTransactions(int fileNum) throws IOException {
         File file = new File("samples/_" + fileNum + ".txt");
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String s;

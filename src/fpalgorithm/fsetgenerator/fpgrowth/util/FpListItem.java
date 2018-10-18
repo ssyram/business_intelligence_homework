@@ -10,6 +10,10 @@ public class FpListItem {
     public FpListItem(int key) {
         this.key = key;
     }
+    public FpListItem(int key, int count) {
+        this.key = key;
+        this.count = count;
+    }
 
     public Integer getKey() {
         return key;
@@ -41,6 +45,9 @@ public class FpListItem {
         return first;
     }
 
+    public void addCount() {
+        ++count;
+    }
     public void addCount(int additionalCount) {
         this.count += additionalCount;
     }

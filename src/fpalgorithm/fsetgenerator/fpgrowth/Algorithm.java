@@ -43,6 +43,12 @@ public class Algorithm {
             item_orderMap = new HashMap<>();
             for (int i = 0; i < orderedItemList.size(); ++i)
                 item_orderMap.put(orderedItemList.get(i).getKey(), i);
+
+            for (Transaction t: transactions)
+                for (Integer i: t.getItemContent())
+                    orderedItemList.get(item_orderMap.get(i)).addCount();
+
+            orderedItemList.sort(Comparator.comparing(FpListItem::getCount));
         }
         FrequentSetContainer r = new FrequentSetContainer();
 
@@ -52,8 +58,7 @@ public class Algorithm {
         createTree(
                 orderedItemList,
                 transactions,
-                item_orderMap,
-                true
+                item_orderMap
         );
 
         mining(r, orderedItemList, item_orderMap, new HashSet<>(), -1, support_threshold);
@@ -77,7 +82,7 @@ public class Algorithm {
             int support_threshold
     ) {
         // when it's the last element, add itself and return
-        if (orderedItemList.isEmpty()) {
+        if (orderedItemList.isEmpty() && support_count >= support_threshold) {
             Set<Integer> s = new HashSet<>(postFixKeySet);
 //            if (postFixKeySet.size() != 1)
 //                throw new RuntimeException("the post fix key set of the last item should be have only one element.");
@@ -100,21 +105,21 @@ public class Algorithm {
                 if (postFixKeySet.size() != 0)
                     r.add(new FrequentSet(new HashSet<>(postFixKeySet), support_count));
                 FpListItem item = orderedItemList.get(i);
-                // get cpb and corresponding itemSet
+                // get cpb and corresponding itemList, the itemList is already sorted
                 Pair<List<Transaction>, List<FpListItem>> analyzedData = analyzePath(item);
                 List<Transaction> transactions = analyzedData.getKey();
                 // turn itemSet to itemList
                 List<FpListItem> itemList = analyzedData.getValue();
-                // get itemList ordered
-                itemList.sort(
-                        (a, b) -> (item_orderMap.get(a.getKey()) - item_orderMap.get(b.getKey()))
-                );
+//                // get itemList ordered
+//                itemList.sort(
+//                        (a, b) -> (item_orderMap.get(a.getKey()) - item_orderMap.get(b.getKey()))
+//                );
 
                 Map<Integer, Integer> nioMap = new HashMap<>();
                 for (int j = 0; j < analyzedData.getValue().size(); ++j)
                     nioMap.put(itemList.get(j).getKey(), j);
 
-                createTree(itemList, transactions, nioMap, false);
+                createTree(itemList, transactions, nioMap);
                 postFixKeySet.add(item.getKey());
                 // support_count < 0 means that it's first mining, pass item.getCount()
                 // or, pass the less one
@@ -226,23 +231,36 @@ public class Algorithm {
         }
     }
 
+    /**
+     * to get the transactions needed
+     * @param item
+     * @return
+     */
     private static Pair<List<Transaction>, List<FpListItem>> analyzePath(FpListItem item) {
-        Set<Integer> checkRs = new HashSet<>(); // use for checking if things should add to itemList
+        // the exact position in the new list
+        Map<Integer, Integer> checkRs = new HashMap<>(); // use for checking if things should add to itemList
+        int pos = 0;
         List<Transaction> rt = new ArrayList<>(); //
-        List<FpListItem> rs = new ArrayList<>(); // the new itemList
+        List<FpListItem> itemList = new ArrayList<>(); // the new itemList
         for (FpTreeNode node = item.getFirst(); node != null; node = node.getNext()) {
             List<Integer> cpb = new ArrayList<>();
             for (FpTreeNode nnode = node.getParentNode(); !nnode.isRoot(); nnode = nnode.getParentNode()) {
                 int item_num = nnode.getItem_Num();
-                if (checkRs.add(item_num))
-                    rs.add(new FpListItem(item_num));
+                if (checkRs.get(item_num) == null) {
+                    itemList.add(new FpListItem(item_num));
+                    checkRs.put(item_num, pos++);
+                }
 
                 cpb.add(item_num);
+                // because on a path, there is no such possibility of repeating a node
+                itemList.get(checkRs.get(item_num)).addCount(node.getCount());
             }
             rt.add(new Transaction(cpb, node.getCount()));
         }
 
-        return new Pair<>(rt, rs);
+        itemList.sort((a, b) -> (b.getCount() - a.getCount()));
+
+        return new Pair<>(rt, itemList);
     }
 
     // for that variables use in lambda should be final or effectively final
@@ -252,8 +270,7 @@ public class Algorithm {
     private static void createTree(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
-            Map<Integer,Integer> item_orderMap,
-            boolean isUnordered
+            Map<Integer,Integer> item_orderMap
     ) {
 //        boolean isUnordered = true; //it means there is no need to order the items in transactions
 //        if (orderedItemList == null) {
@@ -270,15 +287,15 @@ public class Algorithm {
 
         FpTreeNode root = new FpTreeNode();
         for (Transaction transaction: transactions) {
-            if (isUnordered)
+//            if (isUnordered)
 // //                 get item order from item_orderMap and then, for that a larger one is at front
 // //                 so, it's -(a.order() - b.order()) = b.order() - a.order()
 // //                 a.order() == item_orderMap.get(a)
                 // to cope with cpb mode which is descending in order, it should be
                 // b.order() - a.order()
-                transaction.getItemContent().sort(
-                        (a, b) -> (item_orderMap.get(b) - item_orderMap.get(a))
-                );
+            transaction.getItemContent().sort(
+                    (a, b) -> (item_orderMap.get(b) - item_orderMap.get(a))
+            );
 
             putTransactionInTree(root, transaction, transaction.getItemContent().size() - 1,
                     orderedItemList, item_orderMap);
@@ -305,10 +322,10 @@ public class Algorithm {
             item.addNext(nextNode);
         }
 
-        // add total count
-        orderedItemList.get(
-                item_orderMap.get(nextNode.getItem_Num())
-        ).addCount(transaction.getCount());
+//        // add total count
+//        orderedItemList.get(
+//                item_orderMap.get(nextNode.getItem_Num())
+//        ).addCount(transaction.getCount());
 
         nextNode.addCount(transaction.getCount());
 

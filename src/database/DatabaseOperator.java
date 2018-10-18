@@ -233,7 +233,7 @@ public class DatabaseOperator {
             ResultSet set = execute(GET_ITEM_COUNT_SQL);
 
             while (set.next()) {
-                r.add(new FpListItem(set.getInt(1)));
+                r.add(new FpListItem(set.getInt(1), set.getInt(2)));
 //                System.out.println(set.getInt(1) + ": " + set.getInt(2));
                 rm.put(set.getInt(1), i++);
             }
