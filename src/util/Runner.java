@@ -4,7 +4,7 @@ import fpalgorithm.AssociationRuleBuilder;
 import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import util.adaptor.FpGrowthProjectAdaptor;
 import util.adaptor.apriori.AprioriProjectAdaptor;
-import util.result.AssociationRule;
+import fpalgorithm.result.AssociationRule;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,12 +17,12 @@ interface IAdaptor {
 
 public class Runner {
 
-    public static void runApriori(boolean debug, boolean fileOutput) {
-        run(AprioriProjectAdaptor::runApriori, debug, fileOutput);
+    public static void runApriori(boolean outputFrequentSets, boolean fileOutput) {
+        run(AprioriProjectAdaptor::runApriori, outputFrequentSets, fileOutput);
     }
 
-    public static void runFpGrowth(boolean debug, boolean fileOutput) {
-        run(FpGrowthProjectAdaptor::runFpGrowth, debug, fileOutput);
+    public static void runFpGrowth(boolean outputFrequentSets, boolean fileOutput) {
+        run(FpGrowthProjectAdaptor::runFpGrowth, outputFrequentSets, fileOutput);
     }
 
     private static void run(IAdaptor adaptor, boolean debug, boolean fileOutput) {

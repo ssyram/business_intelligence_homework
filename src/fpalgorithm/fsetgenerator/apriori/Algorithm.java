@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Algorithm {
-    public static FrequentSetContainer calculateFrequentSet(
+    public static FrequentSetContainer calculateFrequentSets(
             Map<Integer, Integer> item_countSet,
             IQuerySupportive query,
             int support_threshold

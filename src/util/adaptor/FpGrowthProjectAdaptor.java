@@ -18,7 +18,7 @@ public class FpGrowthProjectAdaptor {
 
         List<Transaction> transactions = DatabaseOperator.getTransactions();
 
-        return Algorithm.calculateRules(orderedItemSet, transactions, GlobalInfo.total_support,
+        return Algorithm.calculateFrequentSets(orderedItemSet, transactions, GlobalInfo.total_support,
                 item_orderMap);
     }
 }

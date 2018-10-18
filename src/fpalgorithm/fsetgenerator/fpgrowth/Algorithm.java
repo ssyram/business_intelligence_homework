@@ -17,12 +17,12 @@ public class Algorithm {
      * @param transactions all transactions
      * @return a set of association rules which will contain all information that is interested
      */
-    public static FrequentSetContainer calculateRules(
+    public static FrequentSetContainer calculateFrequentSets(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
             int support_threshold
     ) {
-        return calculateRules(orderedItemList, transactions, support_threshold, null);
+        return calculateFrequentSets(orderedItemList, transactions, support_threshold, null);
     }
 
     /**
@@ -33,7 +33,7 @@ public class Algorithm {
      *                      orderedItemList, if null, it will be created automatically
      * @return a set of association rules which will contain all information that is interested
      */
-    public static FrequentSetContainer calculateRules(
+    public static FrequentSetContainer calculateFrequentSets(
             List<FpListItem> orderedItemList,
             List<Transaction> transactions,
             int support_threshold,

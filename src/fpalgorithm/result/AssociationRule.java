@@ -1,4 +1,4 @@
-package util.result;
+package fpalgorithm.result;
 
 import java.util.Set;
 

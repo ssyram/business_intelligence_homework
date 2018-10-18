@@ -33,25 +33,48 @@ Then, use Class AssociationRuleBuilder for the FrequentSetContainer result you g
 
 #### database setting
 
-Append a file named
+Append a file /src/database/database_info, and write information about the database to which you would use as a place storing transactions info, by specifying <strong> your database address </strong>, <strong> your user name</strong>, <strong> your password</strong> in the beginning 3 lines, and please do not contain any redundant information. Note that the database you specify <strong> must contain a table as following</strong>: 
+```sql
 
-The package fpalgorithm is the core of this project, which contains, fsetgenerator standing for "frequent set generator" inside which is the algorithm of Apriori and Fp-Growth for generating frequent sets, and also the AssociationRuleBuilder, which is used to generate a set of association rules.
+create table transactions
+(
+  transaction_num int not null,
+  item_num        int not null,
+  primary key (transaction_num, item_num)
+);
 
-Then, these classes are in principle, separated from the other parts of the project. And, the other parts, can, in some extend, be considered as a sample project of using these algorithms.
+```
 
-Just using the algorithms:
-    
-> Import the Algorithm class from fpgrowth or apriori as you want, and then, call them, you can get the frequent sets. But, you must provide information needed by their calculateFrequentSets() static method.
-    
-> After that, you can call AssociationRuleBuilder to analyze the FrequentSetContainer to get the target association rules needed.
-    
-## quick start -- how to quickly use this project to calculate
+#### support and confidence threshold setting
 
-Add a "password" file in directory src/database, and type the password of your database.
-> you must have a MySQL database and also a schema named "business_intelligence_database" and a "transactions" table in it.
+Specify them in the
+``` java 
+DatabaseOperator.loadGlobalInfo(<support threshold>, <confidence threshold>); 
+```
+method in util.GlobalInfo
 
-Import util.Runner, and run the things you want, and you'll finally get the target association rules being output at log/... .
-> before that, you can either use util.samplegenerator.SamplesGenerator to generate some test samples distributed in a controllable Gaussian Function way
+#### run by calling Runner.run<algorithm_name>
+
+If you want to get the results, run this method.
 
 
+### ** 3. Run by TestRunner -- a way to analyze your own data
 
+Save your own data in /samples/_\<number>.txt, \<number> means that you can specify this which must corresponding to TestRunner.run<algorithm_name>(\<number>).
+
+Pay attention that this method <strong>is not originally prepared for being used by users</strong>, so it's not so convenient to use, the data must be written in the following way: 
+> [\<char> <space_divider>]*\<char> \
+> that means: \
+> a b c \
+> is a good input \
+> but not:  
+> ab ac ad
+
+for it will only take the <storng>numeric value</strong> in ascii for the first character in the first place and after each <space_divider>
+
+
+## support function -- Samples Generator
+
+You can use util.samplegenerator.SamplesGenerator to generate samples distributed in a Gaussian Function pattern.
+
+You can also specify the detail parameters of these samples.

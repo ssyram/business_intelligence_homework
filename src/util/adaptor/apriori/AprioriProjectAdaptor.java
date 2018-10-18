@@ -18,6 +18,6 @@ public class AprioriProjectAdaptor {
 
         AprioriQuery query = new AprioriQuery(ftMap);
 
-        return Algorithm.calculateFrequentSet(frequentMap, query, GlobalInfo.total_support);
+        return Algorithm.calculateFrequentSets(frequentMap, query, GlobalInfo.total_support);
     }
 }

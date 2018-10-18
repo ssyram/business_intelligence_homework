@@ -3,7 +3,7 @@ package fpalgorithm;
 import fpalgorithm.fsetgenerator.util.result.FrequentSetContainer;
 import javafx.util.Pair;
 import util.GlobalInfo;
-import util.result.AssociationRule;
+import fpalgorithm.result.AssociationRule;
 import fpalgorithm.fsetgenerator.util.result.FrequentSet;
 
 import java.util.HashSet;

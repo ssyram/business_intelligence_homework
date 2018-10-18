@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class CombinativelyIterableSet<T> implements Iterable<Set<T>> {
-    private Set<T> v;
+    private final Set<T> v;
 
     public CombinativelyIterableSet(@NotNull Set<T> set) {
         v = set;
@@ -21,7 +21,7 @@ public class CombinativelyIterableSet<T> implements Iterable<Set<T>> {
     public Iterator<Set<T>> iterator() {
         return new Iterator<Set<T>>() {
             Object[] va = v.toArray();
-            long pattern = -1;
+            long pattern = -1; // this means it will firstly return an empty set
             long max = (1 << va.length) - 1;
             @Override
             public boolean hasNext() {
