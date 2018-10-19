@@ -13,13 +13,15 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String []args) {
-        System.out.println("run Apriori:");
-        TestRunner.runApriori(4);
-        System.out.println("----------------------------");
-        System.out.println("run Fp Growth:");
-        TestRunner.runFpGrowth(4);
-        TestSamplesGenerator.test();
-        TestGeneric.test();
+//        System.out.println("run Apriori:");
+//        TestRunner.runApriori(6);
+//        System.out.println("----------------------------");
+//        System.out.println("run Fp Growth:");
+//        TestRunner.runFpGrowth(6);
+//        TestSamplesGenerator.test();
+//        TestGeneric.test();
+
+
 
 //        try {
 //            TestRunner.generateSampleTransactions(4);
