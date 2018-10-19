@@ -21,7 +21,8 @@ public class AssociationRuleBuilder {
      */
     public static Set<AssociationRule> build(FrequentSetContainer frequentSets, double confidence_threshold) {
         Set<AssociationRule> rules = new HashSet<>();
-
+        if (frequentSets.size() == 0)
+            return rules;
         for (FrequentSet fs: frequentSets) {
             for (Pair<Set<Integer>, Set<Integer>> left_right_pair: fs) {
                 FrequentSet left = frequentSets.find(left_right_pair.getKey());

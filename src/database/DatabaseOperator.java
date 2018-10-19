@@ -231,6 +231,7 @@ public class DatabaseOperator {
 
         try {
             ResultSet set = execute(GET_ITEM_COUNT_SQL);
+//            System.out.println(GET_ITEM_COUNT_SQL);
 
             while (set.next()) {
                 r.add(new FpListItem(set.getInt(1), set.getInt(2)));

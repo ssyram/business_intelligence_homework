@@ -11,6 +11,14 @@ public class AssociationRule {
         this.support = support; this.confidence = confidence;
     }
 
+    public double getSupport() {
+        return support;
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("(");

@@ -5,6 +5,8 @@ import util.samplegenerator.util.GaussianGenerator;
 
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SamplesGenerator {
 
@@ -30,30 +32,43 @@ public class SamplesGenerator {
     ) {
         parameterValidate(item_amount, transaction_amount, avg_item_num, avg_item_amount, item_standard_variance, item_amount_standard_variance, minLength, maxLength);
 
-        GaussianGenerator itemGenerator = new GaussianGenerator(avg_item_num, item_standard_variance, 0, item_amount + 1);
+        GaussianGenerator itemGenerator = new GaussianGenerator(avg_item_num, item_standard_variance, 1, item_amount + 2);
         GaussianGenerator lengthGenerator = new GaussianGenerator(avg_item_amount, item_amount_standard_variance, minLength, maxLength + 1);
 
         DatabaseOperator.startInsert();
+        
+        StringBuilder builder = new StringBuilder("insert into transactions values");
 
         for (int i = 0; i < transaction_amount; ++i) {
-            StringBuilder builder = new StringBuilder(
-                    "insert into transactions values ("
-            ).append(i).append(", ");
-            int lp = builder.length();
+//            StringBuilder builder = new StringBuilder(
+//                    "insert into transactions values ("
+//            ).append(i).append(", ");
+//            builder.append("(").append(i).append(",");
+//            int lp = builder.length();
             int l = lengthGenerator.getNextInt();
+
+            Set<Integer> alreadyGenerated = new HashSet<>();
 
             for (int j = 0; j < l; ++j) {
                 // unknown if lp == builder.length(), will it throw exception
-                builder.delete(lp, builder.length())
-                        .append(itemGenerator.getNextInt())
-                        .append(")");
+                int ni = itemGenerator.getNextInt();
+                if (alreadyGenerated.add(ni))
+                    builder.append("(").append(i).append(",")
+                            .append(ni)
+                            .append("),");
 
-                try {
-                    DatabaseOperator.continueInsert(builder.toString());
-                } catch (SQLException e) {
-                    --j;
-                }
+//                try {
+//                    DatabaseOperator.continueInsert(builder.toString());
+//                } catch (SQLException e) {
+//                    --j;
+//                }
             }
+        }
+        builder.replace(builder.length() - 1, builder.length(), ";");
+        try {
+            DatabaseOperator.continueInsert(builder.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         DatabaseOperator.endInsert();

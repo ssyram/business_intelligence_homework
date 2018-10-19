@@ -92,7 +92,7 @@ public class Algorithm {
         FpTreeNode root = orderedItemList.get(0).getFirst().getParentNode();
 //        if (!root.isRoot())
 //            throw new RuntimeException("not a valid orderedItemList");
-        trimTree(orderedItemList, support_threshold);
+        trimTree(orderedItemList, support_threshold, item_orderMap);
         if (isSingleBranch(root)) {
             Set<Integer> waitForCombineSet = new HashSet<>();
             for (FpTreeNode node = root.getOnlyChildNode(); node != null; node = node.getOnlyChildNode())
@@ -219,7 +219,7 @@ public class Algorithm {
         }
     }
 
-    private static void trimTree(List<FpListItem> orderedItemList, int support_threshold) {
+    private static void trimTree(List<FpListItem> orderedItemList, int support_threshold, Map<Integer, Integer> item_orderMap) {
         for (int i = orderedItemList.size() - 1; i >= 0; --i) {
             FpListItem item = orderedItemList.get(i);
             if (item.getCount() >= support_threshold)
@@ -228,6 +228,7 @@ public class Algorithm {
             for (FpTreeNode node = item.getFirst(); node != null; node = node.getNext())
                 node.eliminateFromTree();
             orderedItemList.remove(i);
+            item_orderMap.remove(item.getKey());
         }
     }
 
