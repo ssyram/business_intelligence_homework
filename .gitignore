@@ -1,5 +1,5 @@
 .idea
 .out
 /src/database/password
-/src/database/database_info
+database_info
 business_intelligence_homework.iml

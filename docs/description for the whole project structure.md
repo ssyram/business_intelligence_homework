@@ -33,7 +33,7 @@ Then, use Class AssociationRuleBuilder for the FrequentSetContainer result you g
 
 #### database setting
 
-Append a file /src/database/database_info, and write information about the database to which you would use as a place storing transactions info, by specifying <strong> your database address </strong>, <strong> your user name</strong>, <strong> your password</strong> in the beginning 3 lines, and please do not contain any redundant information. Note that the database you specify <strong> must contain a table as following</strong>: 
+Append a file database_info at the root, and write information about the database to which you would use as a place storing transactions info, by specifying <strong> your database address </strong>, <strong> your user name</strong>, <strong> your password</strong> in the beginning 3 lines, and please do not contain any redundant information. Note that the database you specify <strong> must contain a table as following</strong>: 
 ```sql
 
 create table transactions
